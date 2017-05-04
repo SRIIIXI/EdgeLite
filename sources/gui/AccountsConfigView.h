@@ -1,5 +1,5 @@
-#ifndef _ACCOUNTS_WINDOW
-#define _ACCOUNTS_WINDOW
+#ifndef _ACCOUNTS__CONFIG_VIEW
+#define _ACCOUNTS__CONFIG_VIEW
 
 #include <QtWidgets>
 #include <QFrame>
@@ -19,11 +19,11 @@
 #include "SmtpClient.h"
 #include "ThemeManager.h"
 
-class AccountsWindow : public QWidget
+class AccountsConfigView : public QWidget
 {
     Q_OBJECT
 public:
-    AccountsWindow(QWidget* parent = nullptr);
+    AccountsConfigView(QWidget* parent = nullptr);
     void createProfileList();
 
 signals:
@@ -99,7 +99,5 @@ private:
     QLabel errorlbl;
     QTreeWidgetItem* _CurrentItem;
 };
-
-extern AccountsWindow* accountsWindowPtr;
 
 #endif

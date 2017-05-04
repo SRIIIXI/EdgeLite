@@ -1,9 +1,7 @@
-#include "MailCompositionWindow.h"
-#include "AddressBookWindow.h"
+#include "MailNewView.h"
+#include "ContactsView.h"
 
-MailCompositionWindow* mailCompostionWindowPtr = nullptr;
-
-MailCompositionWindow::MailCompositionWindow(QWidget *parent) : QWidget(parent)
+MailNewView::MailNewView(QWidget *parent) : QWidget(parent)
 {
     _Layout.addWidget(&_SendBtn, 0, 0, 1, 1);
     _Layout.addWidget(&_SendIndicator, 0, 1, 1, 1, Qt::AlignRight);
@@ -57,50 +55,29 @@ MailCompositionWindow::MailCompositionWindow(QWidget *parent) : QWidget(parent)
     setWindowIcon(icon);
     setWindowTitle(tr("Compose Email"));
 
-    accountEntityPtr->allAccounts(_ProfileList);
-
-    for (int ctr = 0; ctr < _ProfileList.count(); ctr++ )
-    {
-        Account ps = _ProfileList.at(ctr);
-        _ProfileTxt.addItem(ps.EMailId, ps.EMailId);
-    }
-
     _SMTPClientPtr = nullptr;
 
-    connect(&_ToLbl, &QAbstractButton::clicked, this, &MailCompositionWindow::eventSelectContacts);
-    connect(&_CCLbl, &QAbstractButton::clicked, this, &MailCompositionWindow::eventSelectContacts);
-    connect(&_BCCLbl, &QAbstractButton::clicked, this, &MailCompositionWindow::eventSelectContacts);
+    connect(&_ToLbl, &QAbstractButton::clicked, this, &MailNewView::eventSelectContacts);
+    connect(&_CCLbl, &QAbstractButton::clicked, this, &MailNewView::eventSelectContacts);
+    connect(&_BCCLbl, &QAbstractButton::clicked, this, &MailNewView::eventSelectContacts);
 
-    connect(&_AttachBtn, &QAbstractButton::clicked, this, &MailCompositionWindow::eventAttach);
-    connect(&_SendBtn, &QAbstractButton::clicked, this, &MailCompositionWindow::eventSend);
-
-    mailCompostionWindowPtr = this;
-
-//    adjustBackground(this);
-//    adjustBackground(&_SubjectLbl);
-//    adjustBackground(&_ProfileLbl);
-//    adjustBackground(&_ToTxt);
-//    adjustBackground(&_CCTxt);
-//    adjustBackground(&_BCCTxt);
-//    adjustBackground(&_SubjectTxt);
-//    adjustBackground(&_FileList);
-//    adjustBackground(&_Editor);
-//    adjustBackground(&_SendIndicator);
+    connect(&_AttachBtn, &QAbstractButton::clicked, this, &MailNewView::eventAttach);
+    connect(&_SendBtn, &QAbstractButton::clicked, this, &MailNewView::eventSend);
  }
 
 
-void MailCompositionWindow::eventSelectContacts()
+void MailNewView::eventSelectContacts()
 {
-    addressBookWindowPtr->setContactSelectionFlag(true);
-    addressBookWindowPtr->show();
+    //addressBookWindowPtr->setContactSelectionFlag(true);
+    //addressBookWindowPtr->show();
 }
 
-void MailCompositionWindow::eventProfileSelected()
+void MailNewView::eventProfileSelected()
 {
 
 }
 
-void MailCompositionWindow::eventAuthenticated(QString uname)
+void MailNewView::eventAuthenticated(QString uname)
 {
     _Header.setFrom(_ProfileTxt.currentText());
     _Header.addtoToList(_ToTxt.text());
@@ -113,12 +90,12 @@ void MailCompositionWindow::eventAuthenticated(QString uname)
     _SMTPClientPtr->sendMail(_Header, _Body);
 }
 
-void MailCompositionWindow::eventMailDeliveryStatus(QString uname, QString msgid, bool state)
+void MailNewView::eventMailDeliveryStatus(QString uname, QString msgid, bool state)
 {
     enableInputs();
 
-    disconnect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailCompositionWindow::eventAuthenticated);
-    disconnect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailCompositionWindow::eventMailDeliveryStatus);
+    disconnect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailNewView::eventAuthenticated);
+    disconnect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailNewView::eventMailDeliveryStatus);
     _SMTPClientPtr->close();
     _SMTPClientPtr->deleteLater();
     _SMTPClientPtr = nullptr;
@@ -134,8 +111,8 @@ void MailCompositionWindow::eventMailDeliveryStatus(QString uname, QString msgid
     close();
 }
 
-void MailCompositionWindow::eventSend()
-{   
+void MailNewView::eventSend()
+{
 
     if(_ToTxt.text().length() < 1)
     {
@@ -151,16 +128,16 @@ void MailCompositionWindow::eventSend()
 
     if(_SMTPClientPtr != nullptr)
     {
-        disconnect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailCompositionWindow::eventAuthenticated);
-        disconnect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailCompositionWindow::eventMailDeliveryStatus);
+        disconnect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailNewView::eventAuthenticated);
+        disconnect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailNewView::eventMailDeliveryStatus);
         _SMTPClientPtr->deleteLater();
         _SMTPClientPtr = nullptr;
     }
 
     _SMTPClientPtr = new SmtpClient();
 
-    connect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailCompositionWindow::eventAuthenticated);
-    connect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailCompositionWindow::eventMailDeliveryStatus);
+    connect(_SMTPClientPtr, &SmtpClient::authenticated, this, &MailNewView::eventAuthenticated);
+    connect(_SMTPClientPtr, &SmtpClient::mailDeliveryStatus, this, &MailNewView::eventMailDeliveryStatus);
 
     _SMTPClientPtr->setPublicIpAddress(mailClientPtr->publicIpAddress());
 
@@ -181,7 +158,7 @@ void MailCompositionWindow::eventSend()
     _SMTPClientPtr->connect(prf.MailOutServer, QVariant(prf.MailOutPort).toInt(), prf.MailOutUser, prf.MailOutPass, prf.MailOutSecurity.at(0).toLatin1(), usehandshake);
 }
 
-void MailCompositionWindow::eventAttach()
+void MailNewView::eventAttach()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),  QDir::homePath(), "All files (*.*)");
 
@@ -194,7 +171,7 @@ void MailCompositionWindow::eventAttach()
     }
 }
 
-void MailCompositionWindow::disableInputs()
+void MailNewView::disableInputs()
 {
    _ToLbl.setEnabled(false);
    _CCLbl.setEnabled(false);
@@ -213,7 +190,7 @@ void MailCompositionWindow::disableInputs()
    _SendIndicator.start();
 }
 
-void MailCompositionWindow::enableInputs()
+void MailNewView::enableInputs()
 {
     _ToLbl.setEnabled(true);
     _CCLbl.setEnabled(true);
@@ -232,7 +209,7 @@ void MailCompositionWindow::enableInputs()
     _SendIndicator.stop();
 }
 
-void MailCompositionWindow::setMail(MailHeader emlhdr, MailBody emlbdy)
+void MailNewView::setMail(MailHeader emlhdr, MailBody emlbdy)
 {
     _Header = emlhdr;
     _Body = emlbdy;
@@ -242,9 +219,17 @@ void MailCompositionWindow::setMail(MailHeader emlhdr, MailBody emlbdy)
     _BCCTxt.setText(_Header.bccList().join(","));
     _SubjectTxt.setText(_Header.subject());
     _Editor.setText(_Body.message());
+
+    accountEntityPtr->allAccounts(_ProfileList);
+
+    for (int ctr = 0; ctr < _ProfileList.count(); ctr++ )
+    {
+        Account ps = _ProfileList.at(ctr);
+        _ProfileTxt.addItem(ps.EMailId, ps.EMailId);
+    }
 }
 
-void MailCompositionWindow::addtoToList(QString addr)
+void MailNewView::addtoToList(QString addr)
 {
     QString str = _ToTxt.text() + "," + addr;
     if(str.at(0) == ',')
@@ -254,7 +239,7 @@ void MailCompositionWindow::addtoToList(QString addr)
     _ToTxt.setText(str);
 }
 
-void MailCompositionWindow::addtoCcList(QString addr)
+void MailNewView::addtoCcList(QString addr)
 {
     QString str = _CCTxt.text() + "," + addr;
     if(str.at(0) == ',')
@@ -264,7 +249,7 @@ void MailCompositionWindow::addtoCcList(QString addr)
     _CCTxt.setText(str);
 }
 
-void MailCompositionWindow::addtoBccList(QString addr)
+void MailNewView::addtoBccList(QString addr)
 {
     QString str = _BCCTxt.text() + "," + addr;
     if(str.at(0) == ',')

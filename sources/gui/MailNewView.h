@@ -1,5 +1,5 @@
-#ifndef _MAIL_COMPOSITION_WINDOW
-#define _MAIL_COMPOSITION_WINDOW
+#ifndef _MAIL_NEW_VIEW
+#define _MAIL_NEW_VIEW
 
 #include <QtCore>
 #include <QFileDialog>
@@ -20,11 +20,11 @@
 #include "Mail.h"
 #include "ThemeManager.h"
 
-class MailCompositionWindow : public QWidget
+class MailNewView : public QWidget
 {
     Q_OBJECT
 public:
-    MailCompositionWindow(QWidget *parent = 0);
+    MailNewView(QWidget *parent = 0);
     void setMail(MailHeader emlhdr, MailBody emlbdy);
 
     void addtoToList(QString addr);
@@ -70,7 +70,5 @@ private:
     MailHeader    _Header;
     MailBody      _Body;
 };
-
-extern MailCompositionWindow* mailCompostionWindowPtr;
 
 #endif

@@ -1,9 +1,7 @@
-#include "SettingsWindow.h"
+#include "SettingsView.h"
 #include "ThemeManager.h"
 
-SettingsWindow* settingsWindowPtr = nullptr;
-
-SettingsWindow::SettingsWindow(QWidget *parent) :
+SettingsView::SettingsView(QWidget *parent) :
     QWidget(parent)
 {
     setMinimumWidth(480);
@@ -88,11 +86,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     setWindowTitle(tr("Settings"));
 
     //adjustBackground(this);
-
-    settingsWindowPtr = this;
 }
 
-void SettingsWindow::eventSave()
+void SettingsView::eventSave()
 {
 //    appConfiguration.beginGroup("ODBCConfiguration");
 //    appConfiguration.setValue("DataSourceName", _txtDataSourceName.text());
@@ -120,7 +116,7 @@ void SettingsWindow::eventSave()
 //    appConfiguration.endGroup();
 }
 
-void SettingsWindow::loadConfiguration()
+void SettingsView::loadConfiguration()
 {
 //    appConfiguration.beginGroup("ODBCConfiguration");
 //    _txtDataSourceName.setText(appConfiguration.GetValue("DataSourceName").toString());

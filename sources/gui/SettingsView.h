@@ -1,5 +1,5 @@
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef _SETTINGS_VIEW
+#define _SETTINGS_VIEW
 
 #include <QtCore>
 #include <QWidget>
@@ -11,11 +11,11 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-class SettingsWindow : public QWidget
+class SettingsView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SettingsWindow(QWidget *parent = 0);
+    explicit SettingsView(QWidget *parent = 0);
     void loadConfiguration();
 
 private slots:
@@ -52,7 +52,5 @@ private:
 
     QHBoxLayout _lytCommands;
 };
-
-extern SettingsWindow* settingsWindowPtr;
 
 #endif // SETTINGSDIALOG_H

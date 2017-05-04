@@ -35,7 +35,7 @@ class ContactAddDialog : public QDialog
     Q_OBJECT
 public:
     ContactAddDialog(QWidget *parent = 0);
-    
+
     Contact getRecord();
     void setRecord(const Contact &rec);
     void resetFields();
@@ -102,7 +102,5 @@ private:
     QHBoxLayout buttonLayout;
     QVBoxLayout mainLayout;
 };
-
-extern ContactAddDialog* contactAddDialogPtr;
 
 #endif

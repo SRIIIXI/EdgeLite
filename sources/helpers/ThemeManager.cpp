@@ -17,17 +17,6 @@ ThemeManager::~ThemeManager()
 
 }
 
-void ThemeManager::adjustBackground(QWidget* ptr)
-{
-    QString str = ptr->metaObject()->className();
-
-    QPalette pal = ptr->palette();
-    pal.setColor(QPalette::Background, Qt::white);
-    ptr->setAutoFillBackground(true);
-    ptr->setPalette(pal);
-    ptr->setStyleSheet(str + "{background: white;}");
-}
-
 void ThemeManager::setAppThemeDark(QApplication* ptr)
 {
 #define FUSION_THEME
@@ -50,7 +39,7 @@ void ThemeManager::setAppThemeDark(QApplication* ptr)
     ptr->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #endif
     _ThemeType = Dark;
-    createActions();
+    createPixmaps();
 }
 
 void ThemeManager::setAppThemeLight(QApplication* ptr)
@@ -75,7 +64,7 @@ void ThemeManager::setAppThemeLight(QApplication* ptr)
     ptr->setStyleSheet("QToolTip { color: #000000; background-white: #2a82da; border: 1px solid black; }");
 #endif
     _ThemeType = Light;
-    createActions();
+    createPixmaps();
 }
 
 QString ThemeManager::preferredFont()
@@ -113,54 +102,49 @@ ThemeType ThemeManager::themeType()
     return _ThemeType;
 }
 
-void ThemeManager::createActions()
+void ThemeManager::createPixmaps()
 {
     if(_ThemeType == Dark)
     {
-        fileExit = new QAction(QIcon(":images/dark/exit.png"), ("Exit"), nullptr);
-        fileNewMail = new QAction(QIcon(":images/dark/emailcompose.png"), ("Compose ..."), nullptr);
-        fileAddressBook = new QAction(QIcon(":images/dark/addressbook.png"), ("Contacts ..."), nullptr);
-        fileProfiles = new QAction(QIcon(":images/dark/profiles.png"), ("Profiles ..."), nullptr);
-        fileSettings = new QAction(QIcon(":images/dark/settings.png"), ("Settings ..."), nullptr);
+        _PixFileExit = ":images/dark/exit.png";
+        _PixFileNewMail = ":images/dark/emailcompose.png";
+        _PixFileContacts = ":images/dark/addressbook.png";
+        _PixFileAccouts = ":images/dark/profiles.png";
+        _PixFileSettings = ":images/dark/settings.png";
 
-        editReply = new QAction(QIcon(":images/dark/emailreply.png"), ("Reply"), nullptr);
-        editReplyAll = new QAction(QIcon(":images/dark/emailreplyall.png"), ("Reply All"), nullptr);
-        editForward = new QAction(QIcon(":images/dark/emailforward.png"), ("Forward"), nullptr);
-        editDelete = new QAction(QIcon(":images/dark/emaildelete.png"), ("Delete"), nullptr);
-        editFlag = new QAction(QIcon(":images/dark/emailflag.png"), ("Flag"), nullptr);
+        _PixFileReply = ":images/dark/emailreply.png";
+        _PixFileReplyAll = ":images/dark/emailreplyall.png";
+        _PixFileForward = ":images/dark/emailforward.png";
+        _PixFileDelete = ":images/dark/emaildelete.png";
+        _PixFileFlag = ":images/dark/emailflag.png";
 
-        viewNext = new QAction(QIcon(":images/dark/emailnext.png"), ("Next"), nullptr);
-        viewPrevious = new QAction(QIcon(":images/dark/emailprevious.png"), ("Previous"), nullptr);
-        viewSearch = new QAction(QIcon(":images/dark/emailsearch.png"), ("Search ..."), nullptr);
-        viewRefresh = new QAction(QIcon(":images/dark/refresh.png"), ("Refresh"), nullptr);
-        viewFilter = new QAction(QIcon(":images/dark/emailfilter.png"), ("Filter"), nullptr);
+        _PixFileNext = ":images/dark/emailnext.png";
+        _PixFilePrevious = ":images/dark/emailprevious.png";
+        _PixFileSearch = ":images/dark/emailsearch.png";
+        _PixFileRefresh = ":images/dark/refresh.png";
+        _PixFileFilter = ":images/dark/emailfilter.png";
     }
 
     else
     {
-        fileExit = new QAction(QIcon(":images/light/exit.png"), ("Exit"), nullptr);
-        fileNewMail = new QAction(QIcon(":images/light/emailcompose.png"), ("Compose ..."), nullptr);
-        fileAddressBook = new QAction(QIcon(":images/light/addressbook.png"), ("Contacts ..."), nullptr);
-        fileProfiles = new QAction(QIcon(":images/light/profiles.png"), ("Profiles ..."), nullptr);
-        fileSettings = new QAction(QIcon(":images/light/settings.png"), ("Settings ..."), nullptr);
+        _PixFileExit = ":images/light/exit.png";
+        _PixFileNewMail = ":images/light/emailcompose.png";
+        _PixFileContacts = ":images/light/addressbook.png";
+        _PixFileAccouts = ":images/light/profiles.png";
+        _PixFileSettings = ":images/light/settings.png";
 
-        editReply = new QAction(QIcon(":images/light/emailreply.png"), ("Reply"), nullptr);
-        editReplyAll = new QAction(QIcon(":images/light/emailreplyall.png"), ("Reply All"), nullptr);
-        editForward = new QAction(QIcon(":images/light/emailforward.png"), ("Forward"), nullptr);
-        editDelete = new QAction(QIcon(":images/light/emaildelete.png"), ("Delete"), nullptr);
-        editFlag = new QAction(QIcon(":images/light/emailflag.png"), ("Flag"), nullptr);
+        _PixFileReply = ":images/light/emailreply.png";
+        _PixFileReplyAll = ":images/light/emailreplyall.png";
+        _PixFileForward = ":images/light/emailforward.png";
+        _PixFileDelete = ":images/light/emaildelete.png";
+        _PixFileFlag = ":images/light/emailflag.png";
 
-        viewNext = new QAction(QIcon(":images/light/emailnext.png"), ("Next"), nullptr);
-        viewPrevious = new QAction(QIcon(":images/light/emailprevious.png"), ("Previous"), nullptr);
-        viewSearch = new QAction(QIcon(":images/light/emailsearch.png"), ("Search ..."), nullptr);
-        viewRefresh = new QAction(QIcon(":images/light/refresh.png"), ("Refresh"), nullptr);
-        viewFilter = new QAction(QIcon(":images/light/emailfilter.png"), ("Filter"), nullptr);
+        _PixFileNext = ":images/light/emailnext.png";
+        _PixFilePrevious = ":images/light/emailprevious.png";
+        _PixFileSearch = ":images/light/emailsearch.png";
+        _PixFileRefresh = ":images/light/refresh.png";
+        _PixFileFilter = ":images/light/emailfilter.png";
     }
-}
-
-void ThemeManager::createPixmaps()
-{
-
 }
 
 IndicatorCircular::IndicatorCircular()

@@ -1,8 +1,8 @@
 #include "MainWindow.h"
-#include "AddressBookWindow.h"
-#include "MailCompositionWindow.h"
-#include "AccountsWindow.h"
-#include "SettingsWindow.h"
+#include "ContactsView.h"
+#include "MailNewView.h"
+#include "AccountsConfigView.h"
+#include "SettingsView.h"
 
 MainWindow* mainWindowPtr = nullptr;
 
@@ -22,13 +22,6 @@ MainWindow::~MainWindow()
 
 bool MainWindow::initialize()
 {
-    //Intialize UI elements
-    //createActions();
-    //populateMenubar(_AppMenuBar);
-    //populateToolbar(_AppToolBar);
-    //addToolBar(&_AppToolBar);
-    //setMenuBar(&_AppMenuBar);
-
     setupDirectoryView();
     setupMailBoxView();
     setupViewPane();
@@ -43,22 +36,23 @@ bool MainWindow::initialize()
     _Contacts.loadContacts();
 
     //Wire up event handlers
-//    connect(fileExit, &QAction::triggered, this, &MainWindow::eventExit);
-//    connect(fileNewMail, &QAction::triggered, this, &MainWindow::eventNewMail);
-//    connect(fileAddressBook, &QAction::triggered, this, &MainWindow::eventAddressBook);
-//    connect(fileProfiles, &QAction::triggered, this, &MainWindow::eventProfiles);
-//    connect(fileSettings, &QAction::triggered, this, &MainWindow::eventSettings);
-//    connect(editReply, &QAction::triggered, this, &MainWindow::eventReply);
-//    connect(editReplyAll, &QAction::triggered, this, &MainWindow::eventReplyAll);
-//    connect(editForward, &QAction::triggered, this, &MainWindow::eventForward);
-//    connect(editDelete, &QAction::triggered, this, &MainWindow::eventDelete);
-//    connect(editFlag, &QAction::triggered, this, &MainWindow::eventFlag);
-//    connect(viewNext, &QAction::triggered, this, &MainWindow::eventNext);
-//    connect(viewPrevious, &QAction::triggered, this, &MainWindow::eventPrevious);
-//    connect(viewSearch, &QAction::triggered, this, &MainWindow::eventSearch);
-//    connect(viewRefresh, &QAction::triggered, this, &MainWindow::eventRefresh);
-//    connect(helpAboutQt, &QAction::triggered, this, &MainWindow::eventAboutQt);
-//    connect(helpAboutApplication, &QAction::triggered, this, &MainWindow::eventApplication);
+    connect(&_AccountView, &AccountView::newEmailClicked, this, &MainWindow::eventNewMail);
+    connect(&_AccountView, &AccountView::contactsClicked, this, &MainWindow::eventContacts);
+    connect(&_AccountView, &AccountView::accountsClicked, this, &MainWindow::eventAccounts);
+    connect(&_AccountView, &AccountView::settingsClicked, this, &MainWindow::eventSettings);
+
+    //    connect(fileExit, &QAction::triggered, this, &MainWindow::eventExit);
+    //    connect(editReply, &QAction::triggered, this, &MainWindow::eventReply);
+    //    connect(editReplyAll, &QAction::triggered, this, &MainWindow::eventReplyAll);
+    //    connect(editForward, &QAction::triggered, this, &MainWindow::eventForward);
+    //    connect(editDelete, &QAction::triggered, this, &MainWindow::eventDelete);
+    //    connect(editFlag, &QAction::triggered, this, &MainWindow::eventFlag);
+    //    connect(viewNext, &QAction::triggered, this, &MainWindow::eventNext);
+    //    connect(viewPrevious, &QAction::triggered, this, &MainWindow::eventPrevious);
+    //    connect(viewSearch, &QAction::triggered, this, &MainWindow::eventSearch);
+    //    connect(viewRefresh, &QAction::triggered, this, &MainWindow::eventRefresh);
+    //    connect(helpAboutQt, &QAction::triggered, this, &MainWindow::eventAboutQt);
+    //    connect(helpAboutApplication, &QAction::triggered, this, &MainWindow::eventApplication);
 
     connect(&_AccountView, &AccountView::loadDirectory, &_MailBoxView, &MailBoxView::eventLoadDirectory);
 
@@ -68,9 +62,9 @@ bool MainWindow::initialize()
     connect(&_MailBoxView, &MailBoxView::loadingFinished, this, &MainWindow::eventLoadingFinished);
     connect(&_MailBoxView, &MailBoxView::enableNavigation, this, &MainWindow::eventEnableNavigation);
 
-    connect(accountsWindowPtr, &AccountsWindow::accountAdded, this, &MainWindow::eventProfileAdded);
-    connect(accountsWindowPtr, &AccountsWindow::accountUpdated, this, &MainWindow::eventProfileUpdated);
-    connect(accountsWindowPtr, &AccountsWindow::accountRemoved, this, &MainWindow::eventProfileRemoved);
+    connect(&_Accounts, &AccountsConfigView::accountAdded, this, &MainWindow::eventProfileAdded);
+    connect(&_Accounts, &AccountsConfigView::accountUpdated, this, &MainWindow::eventProfileUpdated);
+    connect(&_Accounts, &AccountsConfigView::accountRemoved, this, &MainWindow::eventProfileRemoved);
 
     //viewRefresh->setEnabled(false);
 
@@ -100,13 +94,21 @@ void MainWindow::setupDirectoryView()
 void MainWindow::setupMailBoxView()
 {
     _AppCentralWidget.addWidget(&_MailBoxView);
-    _MailBoxView.initialize(&_MailView);
+    _MailBoxView.initialize(&_Mail);
 }
 
 void MainWindow::setupViewPane()
 {
     _AppCentralWidget.addWidget(&_ViewPane);
-    _ViewPane.addWidget(&_MailView);
+
+    _ViewPane.addWidget(&_Mail);
+    _ViewPane.addWidget(&_Contacts);
+    _ViewPane.addWidget(&_NewMail);
+    _ViewPane.addWidget(&_Accounts);
+    _ViewPane.addWidget(&_Settings);
+
+    _Contacts.loadContacts();
+
     _ViewPane.setCurrentIndex(0);
 }
 
@@ -115,25 +117,25 @@ void MainWindow::eventExit()
     close();
 }
 
+void MainWindow::eventContacts()
+{
+    _Contacts.setContactSelectionFlag(false);
+    _ViewPane.setCurrentIndex(1);
+}
+
 void MainWindow::eventNewMail()
 {
-    mailCompostionWindowPtr->show();
+    _ViewPane.setCurrentIndex(2);
 }
 
-void MainWindow::eventAddressBook()
+void MainWindow::eventAccounts()
 {
-    addressBookWindowPtr->setContactSelectionFlag(false);
-    addressBookWindowPtr->show();
-}
-
-void MainWindow::eventProfiles()
-{
-    accountsWindowPtr->show();
+    _ViewPane.setCurrentIndex(3);
 }
 
 void MainWindow::eventSettings()
 {
-    settingsWindowPtr->show();
+    _ViewPane.setCurrentIndex(4);
 }
 
 void MainWindow::eventReply()
@@ -150,8 +152,8 @@ void MainWindow::eventReply()
 
     emlhdr.setFrom(str);
 
-    mailCompostionWindowPtr->setMail(emlhdr, _MailBoxView.currentMailBody());
-    mailCompostionWindowPtr->show();
+    _NewMail.setMail(emlhdr, _MailBoxView.currentMailBody());
+    _ViewPane.setCurrentIndex(2);
 }
 
 void MainWindow::eventReplyAll()
@@ -168,8 +170,8 @@ void MainWindow::eventReplyAll()
 
     emlhdr.setFrom(str);
 
-    mailCompostionWindowPtr->setMail(emlhdr, _MailBoxView.currentMailBody());
-    mailCompostionWindowPtr->show();
+    _NewMail.setMail(emlhdr, _MailBoxView.currentMailBody());
+    _ViewPane.setCurrentIndex(2);
 }
 
 void MainWindow::eventForward()
@@ -182,8 +184,8 @@ void MainWindow::eventForward()
 
     emlhdr.setFrom(str);
 
-    mailCompostionWindowPtr->setMail(emlhdr, _MailBoxView.currentMailBody());
-    mailCompostionWindowPtr->show();
+    _NewMail.setMail(emlhdr, _MailBoxView.currentMailBody());
+    _ViewPane.setCurrentIndex(2);
 }
 
 void MainWindow::eventDelete()
@@ -304,7 +306,7 @@ void MainWindow::eventProfileRemoved(QString emailId)
 
     _AccountView.removeAccount(emailId);
     _MailBoxView.clear();
-    _MailView.clear();
+    _Mail.clear();
 }
 
 void MainWindow::loadDirectory(ImapClient *ptr, QString uname, QString dirname, long mcount, long nextuid)

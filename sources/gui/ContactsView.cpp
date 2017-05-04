@@ -1,12 +1,10 @@
-#include "AddressBookWindow.h"
+#include "ContactsView.h"
 #include "ContactAddDialog.h"
 #include "ContactEntity.h"
 #include "ThemeManager.h"
-#include "MailCompositionWindow.h"
+#include "MailNewView.h"
 
-AddressBookWindow* addressBookWindowPtr = nullptr;
-
-AddressBookWindow::AddressBookWindow(QWidget *parent) : QWidget(parent)
+ContactsView::ContactsView(QWidget *parent) : QWidget(parent)
 {
     _CurrentItem = nullptr;
     _IsEdited = false;
@@ -25,17 +23,17 @@ AddressBookWindow::AddressBookWindow(QWidget *parent) : QWidget(parent)
     _BtnSearch.setText("Search");
     _ContactListView.setHeaderLabels(lst);
 
-    connect(addAct, &QAction::triggered, this, &AddressBookWindow::addEntry);
-    connect(editAct, &QAction::triggered, this, &AddressBookWindow::editEntry);
-    connect(removeAct, &QAction::triggered, this, &AddressBookWindow::removeEntry);
-    connect(&_ContactListView, &QTreeWidget::itemClicked, this, &AddressBookWindow::contactSelected);
+    connect(addAct, &QAction::triggered, this, &ContactsView::addEntry);
+    connect(editAct, &QAction::triggered, this, &ContactsView::editEntry);
+    connect(removeAct, &QAction::triggered, this, &ContactsView::removeEntry);
+    connect(&_ContactListView, &QTreeWidget::itemClicked, this, &ContactsView::contactSelected);
 
-    connect(&_BtnSearch, &QAbstractButton::clicked, this, &AddressBookWindow::search);
-    connect(&_ToBtn, &QAbstractButton::clicked, this, &AddressBookWindow::insertTo);
-    connect(&_CCBtn, &QAbstractButton::clicked, this, &AddressBookWindow::insertCc);
-    connect(&_BCCBtn, &QAbstractButton::clicked, this, &AddressBookWindow::insertBcc);
+    connect(&_BtnSearch, &QAbstractButton::clicked, this, &ContactsView::search);
+    connect(&_ToBtn, &QAbstractButton::clicked, this, &ContactsView::insertTo);
+    connect(&_CCBtn, &QAbstractButton::clicked, this, &ContactsView::insertCc);
+    connect(&_BCCBtn, &QAbstractButton::clicked, this, &ContactsView::insertBcc);
 
-    connect(contactAddDialogPtr, &ContactAddDialog::accepted, this, &AddressBookWindow::saveEntry);
+    //connect(contactAddDialogPtr, &ContactAddDialog::accepted, this, &ContactsView::saveEntry);
 
     toolbar.addAction(addAct);
     toolbar.addAction(editAct);
@@ -76,15 +74,9 @@ AddressBookWindow::AddressBookWindow(QWidget *parent) : QWidget(parent)
     setMinimumWidth(640);
     setMaximumHeight(480);
     setMaximumWidth(640);
-
-    //adjustBackground(&toolbar);
-    //adjustBackground(&_ContactListView);
-    //adjustBackground(this);
-
-    addressBookWindowPtr = this;
 }
 
-void AddressBookWindow::setContactSelectionFlag(bool flag)
+void ContactsView::setContactSelectionFlag(bool flag)
 {
     _ContactSelctionMode = flag;
 
@@ -108,7 +100,7 @@ void AddressBookWindow::setContactSelectionFlag(bool flag)
     }
 }
 
-void AddressBookWindow::updateActions(const QItemSelection &selection)
+void ContactsView::updateActions(const QItemSelection &selection)
 {
     QModelIndexList indexes = selection.indexes();
 
@@ -124,7 +116,7 @@ void AddressBookWindow::updateActions(const QItemSelection &selection)
     }
 }
 
-void AddressBookWindow::loadContacts()
+void ContactsView::loadContacts()
 {
     QList<Contact> list;
 
@@ -141,7 +133,7 @@ void AddressBookWindow::loadContacts()
     }
 }
 
-void AddressBookWindow::contactSelected(QTreeWidgetItem *item, int column)
+void ContactsView::contactSelected(QTreeWidgetItem *item, int column)
 {
     _CurrentItem = item;
     _CurrentEmail = item->data(1, Qt::UserRole).toString();
@@ -149,24 +141,24 @@ void AddressBookWindow::contactSelected(QTreeWidgetItem *item, int column)
     removeAct->setEnabled(true);
 }
 
-void AddressBookWindow::addEntry()
+void ContactsView::addEntry()
 {
     _IsEdited = false;
     editAct->setEnabled(false);
     removeAct->setEnabled(false);
-    contactAddDialogPtr->resetFields();
-    contactAddDialogPtr->show();
+    //contactAddDialogPtr->resetFields();
+    //contactAddDialogPtr->show();
 }
 
-void AddressBookWindow::editEntry()
+void ContactsView::editEntry()
 {
     _IsEdited = true;
     Contact rec = contactEntityPtr->cache()->value(_CurrentEmail);
-    contactAddDialogPtr->setRecord(rec);
-    contactAddDialogPtr->show();
+    //contactAddDialogPtr->setRecord(rec);
+    //contactAddDialogPtr->show();
 }
 
-void AddressBookWindow::removeEntry()
+void ContactsView::removeEntry()
 {
     editAct->setEnabled(false);
     removeAct->setEnabled(false);
@@ -182,9 +174,10 @@ void AddressBookWindow::removeEntry()
     }
 }
 
-void AddressBookWindow::saveEntry()
+void ContactsView::saveEntry()
 {
-    Contact rec = contactAddDialogPtr->getRecord();
+    Contact rec;
+    //rec = contactAddDialogPtr->getRecord();
 
     if(_IsEdited)
     {
@@ -202,8 +195,9 @@ void AddressBookWindow::saveEntry()
     }
 }
 
-void AddressBookWindow::insertTo()
+void ContactsView::insertTo()
 {
+    /*
     if(_CurrentItem != nullptr)
     {
         QString str = _ToTxt.text() + "," + _CurrentEmail;
@@ -218,10 +212,12 @@ void AddressBookWindow::insertTo()
             mailCompostionWindowPtr->addtoToList(_CurrentEmail);
         }
     }
+    */
 }
 
-void AddressBookWindow::insertCc()
+void ContactsView::insertCc()
 {
+    /*
     if(_CurrentItem != nullptr)
     {
         QString str = _CCTxt.text() + "," + _CurrentEmail;
@@ -236,10 +232,12 @@ void AddressBookWindow::insertCc()
             mailCompostionWindowPtr->addtoCcList(_CurrentEmail);
         }
     }
+    */
 }
 
-void AddressBookWindow::insertBcc()
+void ContactsView::insertBcc()
 {
+    /*
     if(_CurrentItem != nullptr)
     {
         QString str = _BCCTxt.text() + "," + _CurrentEmail;
@@ -254,9 +252,10 @@ void AddressBookWindow::insertBcc()
             mailCompostionWindowPtr->addtoBccList(_CurrentEmail);
         }
     }
+    */
 }
 
-void AddressBookWindow::search()
+void ContactsView::search()
 {
 
 }

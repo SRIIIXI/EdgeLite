@@ -20,12 +20,11 @@
 #include "ActionBuilder.h"
 #include "ThemeManager.h"
 #include "MailView.h"
-#include "Calender.h"
-#include "AddressBookWindow.h"
-#include "Tasks.h"
-#include "Files.h"
+#include "MailNewView.h"
+#include "ContactsView.h"
+#include "AccountsConfigView.h"
+#include "SettingsView.h"
 
-//class MainWindow : public QMainWindow, ActionBuilder
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -41,11 +40,10 @@ protected:
     void setupViewPane();
 
 protected slots:
-
     void eventExit();
     void eventNewMail();
-    void eventAddressBook();
-    void eventProfiles();
+    void eventContacts();
+    void eventAccounts();
     void eventSettings();
 
     void eventReply();
@@ -73,21 +71,18 @@ protected slots:
     void eventProfileRemoved(QString emailId);
 
 private:
-
-    //QToolBar        _AppToolBar;
-
     QSplitter       _AppCentralWidget;
 
     AccountView    _AccountView;
     MailBoxView     _MailBoxView;
-    MailView    _MailView;
 
     QStackedWidget _ViewPane;
 
-    AddressBookWindow _Contacts;
-    Calender _Calendar;
-    Tasks _Pending;
-    Files _Files;
+    MailView    _Mail;
+    ContactsView _Contacts;
+    MailNewView _NewMail;
+    AccountsConfigView _Accounts;
+    SettingsView _Settings;
 };
 
 extern MainWindow* mainWindowPtr;

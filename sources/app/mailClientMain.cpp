@@ -5,10 +5,10 @@
 #include "ContactEntity.h"
 #include "AccountEntity.h"
 #include "MailBoxEntity.h"
-#include "AddressBookWindow.h"
-#include "MailCompositionWindow.h"
-#include "AccountsWindow.h"
-#include "SettingsWindow.h"
+#include "ContactsView.h"
+#include "MailNewView.h"
+#include "AccountsConfigView.h"
+#include "SettingsView.h"
 #include "ContactAddDialog.h"
 #include "ThemeManager.h"
 #include "ImageLabel.h"
@@ -81,13 +81,6 @@ int main(int argc, char *argv[])
         contactEntityPtr->createContactTable();
     }
 
-    //Create global instances of all subsidiary windows
-    new AddressBookWindow();
-    new MailCompositionWindow();
-    new AccountsWindow();
-    new SettingsWindow();
-    new ContactAddDialog();
-
     mailClientPtr->showMessage("Initializing main window");
     if(!mainWindowPtr->initialize())
     {
@@ -99,8 +92,6 @@ int main(int argc, char *argv[])
     mailClientPtr->showMessage("Creating sub windows");
 
     mailClientPtr->startOnline();
-
-    addressBookWindowPtr->loadContacts();
 
     return app->exec();
 }

@@ -1,9 +1,7 @@
-#include "AccountsWindow.h"
+#include "AccountsConfigView.h"
 #include "MailClient.h"
 
-AccountsWindow* accountsWindowPtr = nullptr;
-
-AccountsWindow::AccountsWindow(QWidget* parent) : QWidget(parent)
+AccountsConfigView::AccountsConfigView(QWidget* parent) : QWidget(parent)
 {
     imapPtr = nullptr;
     smtpPtr = nullptr;
@@ -35,7 +33,7 @@ AccountsWindow::AccountsWindow(QWidget* parent) : QWidget(parent)
     _MainLayout.addWidget(&_Toolbar, 0, 0, 1, 4, Qt::AlignTop | Qt::AlignLeft);
     _MainLayout.addWidget(&_ProfileListView, 1, 0, 1, 4, Qt::AlignTop | Qt::AlignLeft);
 
-    createProfileList();
+    //createProfileList();
 
     createAccountContent();
 
@@ -49,7 +47,6 @@ AccountsWindow::AccountsWindow(QWidget* parent) : QWidget(parent)
     _Toolbar.setAutoFillBackground(true);
     _Toolbar.setPalette(pal);
     _Toolbar.setIconSize(QSize(32,32));
-    //_Toolbar.setStyleSheet("QToolBar { background: white; }");
 
     setMinimumHeight(415);
     setMaximumHeight(495);
@@ -74,17 +71,13 @@ AccountsWindow::AccountsWindow(QWidget* parent) : QWidget(parent)
      _ProfileListView.setColumnWidth(1,150);
      _ProfileListView.setColumnWidth(2,50);
 
-    connect(addAct, &QAction::triggered, this, &AccountsWindow::resetFields);
-    connect(removeAct, &QAction::triggered, this, &AccountsWindow::removeEntry);
-    connect(saveAct, &QAction::triggered, this, &AccountsWindow::saveEntry);
-    connect(&_ProfileListView, &QTreeWidget::itemClicked, this, &AccountsWindow::accountSelected);
-
-    accountsWindowPtr = this;
-
-    //adjustBackground(this);
+    connect(addAct, &QAction::triggered, this, &AccountsConfigView::resetFields);
+    connect(removeAct, &QAction::triggered, this, &AccountsConfigView::removeEntry);
+    connect(saveAct, &QAction::triggered, this, &AccountsConfigView::saveEntry);
+    connect(&_ProfileListView, &QTreeWidget::itemClicked, this, &AccountsConfigView::accountSelected);
 }
 
-void AccountsWindow::createProfileList()
+void AccountsConfigView::createProfileList()
 {
     if(accountEntityPtr->cache()->count() < 1)
     {
@@ -106,7 +99,7 @@ void AccountsWindow::createProfileList()
      }
 }
 
-void AccountsWindow::createAccountContent()
+void AccountsConfigView::createAccountContent()
 {
     mailInGrplbl.setText("Mail Incoming");
     mailInServlbl.setText("Server");
@@ -184,7 +177,7 @@ void AccountsWindow::createAccountContent()
     errorlbl.setMinimumHeight(32);
 }
 
-void AccountsWindow::accountSelected(QTreeWidgetItem *item, int column)
+void AccountsConfigView::accountSelected(QTreeWidgetItem *item, int column)
 {
     _CurrentRecord.EMailId = item->data(0, Qt::UserRole).toString();
     _CurrentItem = item;
@@ -255,7 +248,7 @@ void AccountsWindow::accountSelected(QTreeWidgetItem *item, int column)
     }
 }
 
-void AccountsWindow::removeEntry()
+void AccountsConfigView::removeEntry()
 {
     if(accountEntityPtr->cache()->contains(_CurrentRecord.EMailId))
     {
@@ -294,7 +287,7 @@ void AccountsWindow::removeEntry()
     }
 }
 
-void AccountsWindow::resetFields()
+void AccountsConfigView::resetFields()
 {
     mailInServctl.setText("");
     mailInPortctl.setText("");
@@ -332,7 +325,7 @@ void AccountsWindow::resetFields()
     _CurrentRecord.MailOutUseHandshake = "";
 }
 
-void AccountsWindow::saveEntry()
+void AccountsConfigView::saveEntry()
 {
     errorlbl.setText("");
     progressAct->setVisible(true);
@@ -357,8 +350,8 @@ void AccountsWindow::saveEntry()
 
     imapPtr = new ImapClient();
 
-    connect(imapPtr, &ImapClient::authenticated, this, &AccountsWindow::eventImapAuthenticated);
-    connect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsWindow::eventImapAuthenticationFailure);
+    connect(imapPtr, &ImapClient::authenticated, this, &AccountsConfigView::eventImapAuthenticated);
+    connect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsConfigView::eventImapAuthenticationFailure);
 
     imapPtr->connect(_CurrentRecord.MailInServer,
                      QVariant(_CurrentRecord.MailInPort).toInt(),
@@ -367,18 +360,18 @@ void AccountsWindow::saveEntry()
                      _CurrentRecord.MailInSecurity.at(0).toLatin1());
 }
 
-void AccountsWindow::eventImapAuthenticated()
+void AccountsConfigView::eventImapAuthenticated()
 {
-    disconnect(imapPtr, &ImapClient::authenticated, this, &AccountsWindow::eventImapAuthenticated);
-    disconnect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsWindow::eventImapAuthenticationFailure);
+    disconnect(imapPtr, &ImapClient::authenticated, this, &AccountsConfigView::eventImapAuthenticated);
+    disconnect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsConfigView::eventImapAuthenticationFailure);
     imapPtr->close();
     imapPtr->deleteLater();
     imapPtr = nullptr;
 
     smtpPtr = new SmtpClient();
 
-    connect(smtpPtr, &SmtpClient::authenticated, this, &AccountsWindow::eventSmtpAuthenticated);
-    connect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsWindow::eventSmtpAuthenticationFailure);
+    connect(smtpPtr, &SmtpClient::authenticated, this, &AccountsConfigView::eventSmtpAuthenticated);
+    connect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsConfigView::eventSmtpAuthenticationFailure);
 
     bool handshake = true;
 
@@ -401,10 +394,10 @@ void AccountsWindow::eventImapAuthenticated()
 
 }
 
-void AccountsWindow::eventSmtpAuthenticated()
+void AccountsConfigView::eventSmtpAuthenticated()
 {
-    disconnect(smtpPtr, &SmtpClient::authenticated, this, &AccountsWindow::eventSmtpAuthenticated);
-    disconnect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsWindow::eventSmtpAuthenticationFailure);
+    disconnect(smtpPtr, &SmtpClient::authenticated, this, &AccountsConfigView::eventSmtpAuthenticated);
+    disconnect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsConfigView::eventSmtpAuthenticationFailure);
     smtpPtr->close();
     smtpPtr->deleteLater();
     smtpPtr = nullptr;
@@ -433,10 +426,10 @@ void AccountsWindow::eventSmtpAuthenticated()
     errorlbl.setText("");
 }
 
-void AccountsWindow::eventImapAuthenticationFailure(QString uname, QString pass)
+void AccountsConfigView::eventImapAuthenticationFailure(QString uname, QString pass)
 {
-    disconnect(imapPtr, &ImapClient::authenticated, this, &AccountsWindow::eventImapAuthenticated);
-    disconnect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsWindow::eventImapAuthenticationFailure);
+    disconnect(imapPtr, &ImapClient::authenticated, this, &AccountsConfigView::eventImapAuthenticated);
+    disconnect(imapPtr, &ImapClient::authenticationFailure, this, &AccountsConfigView::eventImapAuthenticationFailure);
     imapPtr->close();
     imapPtr->deleteLater();
     imapPtr = nullptr;
@@ -446,10 +439,10 @@ void AccountsWindow::eventImapAuthenticationFailure(QString uname, QString pass)
     progressAct->setVisible(false);
 }
 
-void AccountsWindow::eventSmtpAuthenticationFailure(QString uname, QString pass)
+void AccountsConfigView::eventSmtpAuthenticationFailure(QString uname, QString pass)
 {
-    disconnect(smtpPtr, &SmtpClient::authenticated, this, &AccountsWindow::eventSmtpAuthenticated);
-    disconnect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsWindow::eventSmtpAuthenticationFailure);
+    disconnect(smtpPtr, &SmtpClient::authenticated, this, &AccountsConfigView::eventSmtpAuthenticated);
+    disconnect(smtpPtr, &SmtpClient::authenticationFailure, this, &AccountsConfigView::eventSmtpAuthenticationFailure);
     smtpPtr->close();
     smtpPtr->deleteLater();
     smtpPtr = nullptr;

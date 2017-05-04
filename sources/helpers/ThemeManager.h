@@ -21,7 +21,6 @@ public:
     ThemeManager();
     virtual ~ThemeManager();
 
-    void adjustBackground(QWidget* ptr);
     void setAppThemeDark(QApplication *ptr);
     void setAppThemeLight(QApplication *ptr);
 
@@ -30,54 +29,48 @@ public:
     QPalette palette();
     ThemeType themeType();
 
-    QAction* exit() { return fileExit; }
-    QAction* newEmail() { return fileNewMail; }
-    QAction* addressBook() { return fileAddressBook; }
-    QAction* accounts() { return fileProfiles; }
-    QAction* settings() { return fileSettings; }
+    QString exit() { return _PixFileExit; }
+    QString newEmail() { return _PixFileNewMail; }
+    QString contacts() { return _PixFileContacts; }
+    QString accounts() { return _PixFileAccouts; }
+    QString settings() { return _PixFileSettings; }
 
-    QAction* reply() { return editReply; }
-    QAction* replyAll() { return editReplyAll; }
-    QAction* forward() { return editForward; }
-    QAction* deleteEmail() { return editDelete; }
-    QAction* flagEmail() { return editFlag; }
+    QString reply() { return _PixFileReply; }
+    QString replyAll() { return _PixFileReplyAll; }
+    QString forward() { return _PixFileForward; }
+    QString deleteEmail() { return _PixFileDelete; }
+    QString flagEmail() { return _PixFileFlag; }
 
-    QAction* next() { return viewNext; }
-    QAction* previous() { return viewPrevious; }
-    QAction* search() { return viewSearch; }
-    QAction* refresh() { return viewRefresh; }
-    QAction* filter() { return viewFilter; }
-
+    QString next() { return _PixFileNext; }
+    QString previous() { return _PixFilePrevious; }
+    QString search() { return _PixFileSearch; }
+    QString refresh() { return _PixFileRefresh; }
+    QString filter() { return _PixFileFilter; }
 
 private:
-    void createActions();
     void createPixmaps();
 
     QString _PreferredFont;
     QPalette _ApplicationPalette;
     ThemeType _ThemeType;
 
-    QAction* fileExit;
-    QAction* fileNewMail;
-    QAction* fileAddressBook;
-    QAction* fileProfiles;
-    QAction* fileSettings;
+    QString _PixFileExit;
+    QString _PixFileNewMail;
+    QString _PixFileContacts;
+    QString _PixFileAccouts;
+    QString _PixFileSettings;
 
-    QAction* editReply;
-    QAction* editReplyAll;
-    QAction* editForward;
-    QAction* editDelete;
-    QAction* editFlag;
+    QString _PixFileReply;
+    QString _PixFileReplyAll;
+    QString _PixFileForward;
+    QString _PixFileDelete;
+    QString _PixFileFlag;
 
-    QAction* viewNext;
-    QAction* viewPrevious;
-    QAction* viewSearch;
-    QAction* viewRefresh;
-    QAction* viewFilter;
-
-    QPixmap* _PixNewEmail;
-    QPixmap* _PixAccount;
-    QPixmap* _PixFolder;
+    QString _PixFileNext;
+    QString _PixFilePrevious;
+    QString _PixFileSearch;
+    QString _PixFileRefresh;
+    QString _PixFileFilter;
 };
 
 extern ThemeManager ApplicationThemeManager;

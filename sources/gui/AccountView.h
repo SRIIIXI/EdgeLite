@@ -30,8 +30,18 @@ public:
 
 signals:
     void loadDirectory(ImapClient* ptr, QString uname, QString dirname, long count, long nextuid);
+    void newEmailClicked();
+    void contactsClicked();
+    void accountsClicked();
+    void settingsClicked();
 
 private slots:
+
+    void eventNewEmail(bool checked = false);
+    void eventContacts(bool checked = false);
+    void eventAccounts(bool checked = false);
+    void eventSettings(bool checked = false);
+
     void eventAuthenticated(QString uname);
     void eventdirectoryListReceived(QString uname, QStringList slist);
     void eventdirectoryReceived(QString uname, QString dirname, long count, long nextuid);
@@ -48,7 +58,11 @@ private:
     QListWidget _AccountList;
     QListWidget _DirectoryList;
     ImageLabel  _DirectoryLabel;
+
     QToolBar    _Toolbar;
+    QAction* _ContactsAction;
+    QAction* _AccountsAction;
+    QAction* _SettingsAction;
 
     QMap<QString, ImapClient*> _MailboxMap;
     QMap<QString, QStringList> _DirectoryMap;

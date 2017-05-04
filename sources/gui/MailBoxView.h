@@ -126,6 +126,8 @@ private:
     QMap<int, MailHeader> _NewMailMap;
     QMap<QString, MailHeader> _OldMailMap;
 
+    QAction* _SearchAction;
+    QAction* _RefreshActon;
 };
 
 #endif // DIRECTORYVIEW_H

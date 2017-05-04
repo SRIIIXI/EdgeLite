@@ -1,5 +1,5 @@
-#ifndef _ADDRESS_BOOK_WINDOW
-#define _ADDRESS_BOOK_WINDOW
+#ifndef _CONTACTS_VIEW
+#define _CONTACTS_VIEW
 
 #include <QMainWindow>
 #include <QWidget>
@@ -18,11 +18,11 @@
 #include <QVBoxLayout>
 
 
-class AddressBookWindow : public QWidget
+class ContactsView : public QWidget
 {
     Q_OBJECT
 public:
-    AddressBookWindow(QWidget* parent = nullptr);
+    ContactsView(QWidget* parent = nullptr);
     void loadContacts();
     void setContactSelectionFlag(bool flag);
 
@@ -69,7 +69,5 @@ private:
     QString _CurrentEmail;
     bool _IsEdited;
 };
-
-extern AddressBookWindow* addressBookWindowPtr;
 
 #endif

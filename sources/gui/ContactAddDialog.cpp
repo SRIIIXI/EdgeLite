@@ -1,8 +1,6 @@
 #include "ContactAddDialog.h"
 #include "ThemeManager.h"
 
-ContactAddDialog* contactAddDialogPtr = nullptr;
-
 ClickableLabel::ClickableLabel(const QString& text, QWidget* parent)
     : QLabel(parent)
 {
@@ -107,10 +105,6 @@ ContactAddDialog::ContactAddDialog(QWidget *parent)
     setWindowTitle(tr("Add a Contact"));
     QIcon icon(":/images/contact.png");
     setWindowIcon(icon);
-
-    //adjustBackground(this);
-
-    contactAddDialogPtr = this;
 }
 
 void ContactAddDialog::pictureSelect()
@@ -158,7 +152,6 @@ Contact ContactAddDialog::getRecord()
     struc.Photo = pixBase64;
 
     return struc;
-
 }
 
 void ContactAddDialog::setRecord(const Contact &rec)

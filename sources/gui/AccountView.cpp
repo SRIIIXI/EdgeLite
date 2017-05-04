@@ -21,9 +21,18 @@ AccountView::AccountView(QWidget *parent) : QWidget(parent)
     _DirectoryList.setFrameStyle(QFrame::NoFrame);
 
     _Toolbar.setOrientation(Qt::Horizontal);
-    _Toolbar.addAction(ApplicationThemeManager.addressBook());
-    _Toolbar.addAction(ApplicationThemeManager.accounts());
-    _Toolbar.addAction(ApplicationThemeManager.settings());
+    _ContactsAction = new QAction(QIcon(ApplicationThemeManager.contacts()), "Contacts", nullptr);
+    _AccountsAction = new QAction(QIcon(ApplicationThemeManager.accounts()), "Accounts", nullptr);
+    _SettingsAction = new QAction(QIcon(ApplicationThemeManager.settings()), "Settings", nullptr);
+
+    _Toolbar.addAction(_ContactsAction);
+    _Toolbar.addAction(_AccountsAction);
+    _Toolbar.addAction(_SettingsAction);
+
+    //connect(ApplicationThemeManager.contacts(), &QAction::triggered, &AccountView::eventContacts);
+    connect(_ContactsAction, &QAction::triggered, this, &AccountView::eventContacts);
+    connect(_AccountsAction, &QAction::triggered, this, &AccountView::eventAccounts);
+    connect(_SettingsAction, &QAction::triggered, this, &AccountView::eventSettings);
 
     _MainLayout.addWidget(&_NewMailLabel, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_AccountsLabel, Qt::AlignLeft | Qt::AlignTop);
@@ -258,3 +267,22 @@ void AccountView::updateAccount(QString emailId)
 
 }
 
+void AccountView::eventNewEmail(bool checked)
+{
+    emit newEmailClicked();
+}
+
+void AccountView::eventContacts(bool checked)
+{
+    emit contactsClicked();
+}
+
+void AccountView::eventAccounts(bool checked)
+{
+    emit accountsClicked();
+}
+
+void AccountView::eventSettings(bool checked)
+{
+    emit settingsClicked();
+}

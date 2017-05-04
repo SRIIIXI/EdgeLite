@@ -9,8 +9,13 @@ MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
 {
     _Toolbar.setOrientation(Qt::Horizontal);
     _Toolbar.addWidget(&_SearchBox);
-    _Toolbar.addAction(ApplicationThemeManager.search());
-    _Toolbar.addAction(ApplicationThemeManager.refresh());
+
+    _SearchAction = new QAction(QIcon(ApplicationThemeManager.search()), "Search", nullptr);
+    _RefreshActon = new QAction(QIcon(ApplicationThemeManager.refresh()), "Refresh", nullptr);
+
+    _Toolbar.addAction(_SearchAction);
+    _Toolbar.addAction(_RefreshActon);
+
     _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_MailList, Qt::AlignLeft | Qt::AlignTop);
     _MailList.setItemDelegate(new MailListItemDelegate(&_MailList));
