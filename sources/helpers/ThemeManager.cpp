@@ -123,6 +123,7 @@ void ThemeManager::createPixmaps()
         _PixFileSearch = ":images/dark/emailsearch.png";
         _PixFileRefresh = ":images/dark/refresh.png";
         _PixFileFilter = ":images/dark/emailfilter.png";
+        _PixFileUnknown = ":images/dark/unk.png";
     }
 
     else
@@ -144,6 +145,7 @@ void ThemeManager::createPixmaps()
         _PixFileSearch = ":images/light/emailsearch.png";
         _PixFileRefresh = ":images/light/refresh.png";
         _PixFileFilter = ":images/light/emailfilter.png";
+        _PixFileUnknown = ":images/light/unk.png";
     }
 }
 

@@ -11,7 +11,7 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QToolBar>
-#include "ImageLabel.h"
+#include "CustomWidgets.h"
 #include "ImapClient.h"
 #include "AccountEntity.h"
 
@@ -37,7 +37,7 @@ signals:
 
 private slots:
 
-    void eventNewEmail(bool checked = false);
+    void eventNewEmail();
     void eventContacts(bool checked = false);
     void eventAccounts(bool checked = false);
     void eventSettings(bool checked = false);

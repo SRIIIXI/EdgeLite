@@ -4,6 +4,7 @@
 #include "Mail.h"
 #include "MailStorage.h"
 #include "ItemDelegates.h"
+#include "ThemeManager.h"
 
 MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
 {
@@ -76,6 +77,7 @@ void MailBoxView::eventLoadDirectory(ImapClient *ptr, QString uname, QString dir
         mailItem->setData(Qt::UserRole+1, QVariant(hdr.subject()));
         mailItem->setData(Qt::UserRole+2, QVariant(hdr.timeStamp()));
         mailItem->setData(Qt::UserRole+3, QVariant(false));
+        mailItem->setData(Qt::DecorationRole, QVariant(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48)));
         _MailList.insertItem(0, mailItem);
     }
 
@@ -190,6 +192,7 @@ void MailBoxView::eventHeaderReceived(QString uname, QString dirname, long msgno
         mailItem->setData(Qt::UserRole+2, QVariant(emlhdr.timeStamp()));
         mailItem->setData(Qt::UserRole+3, QVariant(true));
         mailItem->setData(Qt::UserRole+4, QVariant((int)msgno));
+        mailItem->setData(Qt::DecorationRole, QVariant(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48)));
         _MailList.insertItem(0, mailItem);
 
         _NewMailMap.insert(msgno, emlhdr);

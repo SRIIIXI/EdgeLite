@@ -27,15 +27,11 @@ private:
     QLabel _FromLbl;
     QLabel _ToLbl;
     QLabel _CCLbl;
-    QLabel _BCCLbl;
-    QLabel _SubjectLbl;
-    QLabel _TimeStampLbl;
     QLabel _AttachLbl;
 
     QLabel _FromTxt;
     QLabel _ToTxt;
     QLabel _CCTxt;
-    QLabel _BCCTxt;
     QLabel _SubjectTxt;
     QLabel _TimeStampTxt;
     QListWidget _FileList;

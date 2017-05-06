@@ -66,5 +66,7 @@
         <file>images/EmailGeneric.png</file>
         <file>images/light/newemail.png</file>
         <file>images/dark/newemail.png</file>
+        <file>images/dark/unk.png</file>
+        <file>images/light/unk.png</file>
     </qresource>
 </RCC>

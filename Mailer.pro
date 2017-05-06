@@ -28,11 +28,11 @@ HEADERS += \
     sources/gui/AccountView.h \
     sources/model/AccountEntity.h \
     sources/helpers/ThemeManager.h \
-    sources/gui/ImageLabel.h \
     sources/gui/SettingsView.h \
     sources/gui/ContactsView.h \
     sources/gui/AccountsConfigView.h \
-    sources/gui/MailNewView.h
+    sources/gui/MailNewView.h \
+    sources/gui/CustomWidgets.h
 
 SOURCES += \
     sources/data/DataEntity.cpp \
@@ -54,8 +54,8 @@ SOURCES += \
     sources/gui/AccountView.cpp \
     sources/model/AccountEntity.cpp \
     sources/helpers/ThemeManager.cpp \
-    sources/gui/ImageLabel.cpp \
     sources/gui/SettingsView.cpp \
     sources/gui/ContactsView.cpp \
     sources/gui/AccountsConfigView.cpp \
-    sources/gui/MailNewView.cpp
+    sources/gui/MailNewView.cpp \
+    sources/gui/CustomWidgets.cpp

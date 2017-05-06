@@ -46,6 +46,7 @@ public:
     QString search() { return _PixFileSearch; }
     QString refresh() { return _PixFileRefresh; }
     QString filter() { return _PixFileFilter; }
+    QString unknown() { return _PixFileUnknown; }
 
 private:
     void createPixmaps();
@@ -71,6 +72,7 @@ private:
     QString _PixFileSearch;
     QString _PixFileRefresh;
     QString _PixFileFilter;
+    QString _PixFileUnknown;
 };
 
 extern ThemeManager ApplicationThemeManager;

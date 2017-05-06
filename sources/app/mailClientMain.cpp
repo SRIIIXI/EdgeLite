@@ -11,7 +11,7 @@
 #include "SettingsView.h"
 #include "ContactAddDialog.h"
 #include "ThemeManager.h"
-#include "ImageLabel.h"
+#include "CustomWidgets.h"
 
 int main(int argc, char *argv[])
 {

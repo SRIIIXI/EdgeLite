@@ -29,7 +29,7 @@ AccountView::AccountView(QWidget *parent) : QWidget(parent)
     _Toolbar.addAction(_AccountsAction);
     _Toolbar.addAction(_SettingsAction);
 
-    //connect(ApplicationThemeManager.contacts(), &QAction::triggered, &AccountView::eventContacts);
+    connect(&_NewMailLabel, &ImageLabel::clicked, this, &AccountView::eventNewEmail);
     connect(_ContactsAction, &QAction::triggered, this, &AccountView::eventContacts);
     connect(_AccountsAction, &QAction::triggered, this, &AccountView::eventAccounts);
     connect(_SettingsAction, &QAction::triggered, this, &AccountView::eventSettings);
@@ -267,7 +267,7 @@ void AccountView::updateAccount(QString emailId)
 
 }
 
-void AccountView::eventNewEmail(bool checked)
+void AccountView::eventNewEmail()
 {
     emit newEmailClicked();
 }

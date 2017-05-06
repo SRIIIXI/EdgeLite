@@ -1,45 +1,35 @@
 #include "MailView.h"
+#include "ThemeManager.h"
 
 MailView::MailView(QWidget *parent) : QWidget(parent)
 {
-    _Layout.addWidget(&_FromLbl, 0, 0, 1, 1);
+    _Layout.addWidget(&_FromLbl, 0, 0, 2, 1);
+
     _Layout.addWidget(&_FromTxt, 0, 1, 1, 1);
 
-    _Layout.addWidget(&_ToLbl, 1, 0, 1, 1);
-    _Layout.addWidget(&_ToTxt, 1, 1, 1, 1);
+    _Layout.addWidget(&_TimeStampTxt, 1, 1, 1, 1);
 
-    _Layout.addWidget(&_CCLbl, 2, 0, 1, 1);
-    _Layout.addWidget(&_CCTxt, 2, 1, 1, 1);
+    _Layout.addWidget(&_SubjectTxt, 3, 0, 1, 2);
 
-    _Layout.addWidget(&_BCCLbl, 3, 0, 1, 1);
-    _Layout.addWidget(&_BCCTxt, 3, 1, 1,1);
+    _Layout.addWidget(&_ToLbl, 4, 0, 1, 1);
+    _Layout.addWidget(&_ToTxt, 4, 1, 1, 1);
 
-    _Layout.addWidget(&_SubjectLbl, 4, 0, 1, 1);
-    _Layout.addWidget(&_SubjectTxt, 4, 1, 1, 1);
-
-    _Layout.addWidget(&_TimeStampLbl, 5, 0, 1, 1);
-    _Layout.addWidget(&_TimeStampTxt, 5, 1, 1, 1);
+    _Layout.addWidget(&_CCLbl, 5, 0, 1, 1);
+    _Layout.addWidget(&_CCTxt, 5, 1, 1, 1);
 
     _Layout.addWidget(&_AttachLbl, 6, 0, 1, 1);
     _Layout.addWidget(&_FileList, 6, 1, 1, 1);
 
     _Layout.addWidget(&_Viewer, 8, 0, 1, 2);
 
-    _FromLbl.setText("From: ");
     _ToLbl.setText("To: ");
     _CCLbl.setText("Cc: ");
-    _BCCLbl.setText("Bcc: ");
-    _TimeStampLbl.setText("Date & Time:");
     _AttachLbl.setText("Attachments: ");
-    _SubjectLbl.setText("Subject: ");
 
     _FromLbl.setMaximumWidth(75);
     _ToLbl.setMaximumWidth(75);
     _CCLbl.setMaximumWidth(75);
-    _BCCLbl.setMaximumWidth(75);
-    _TimeStampLbl.setMaximumWidth(75);
     _AttachLbl.setMaximumWidth(75);
-    _SubjectLbl.setMaximumWidth(75);
 
     _FileList.setFlow(QListWidget::LeftToRight);
     _FileList.setViewMode(QListView::ListMode);
@@ -52,9 +42,6 @@ MailView::MailView(QWidget *parent) : QWidget(parent)
     _FromLbl.setVisible(false);
     _ToLbl.setVisible(false);
     _CCLbl.setVisible(false);
-    _BCCLbl.setVisible(false);
-    _SubjectLbl.setVisible(false);
-    _TimeStampLbl.setVisible(false);
     _AttachLbl.setVisible(false);
     _FileList.setVisible(false);
 
@@ -62,6 +49,15 @@ MailView::MailView(QWidget *parent) : QWidget(parent)
     _Layout.setSpacing(0);
     _WidgetLayout.addLayout(&_Layout, 0, 0);
     setLayout(&_WidgetLayout);
+
+    QFont ftfrom(ApplicationThemeManager.preferredFont(), 11);
+    _FromTxt.setFont(ftfrom);
+
+    QFont ftsubj(ApplicationThemeManager.preferredFont(), 9, true);
+    ftsubj.setBold(true);
+    _SubjectTxt.setFont(ftsubj);
+
+    _FromLbl.setPixmap(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48));
  }
 
 void MailView::setMail(MailHeader emlhdr, MailBody emlbdy)
@@ -70,17 +66,17 @@ void MailView::setMail(MailHeader emlhdr, MailBody emlbdy)
 
     _FromLbl.setVisible(true);
     _ToLbl.setVisible(true);
-    _CCLbl.setVisible(true);
-    _BCCLbl.setVisible(true);
-    _SubjectLbl.setVisible(true);
-    _TimeStampLbl.setVisible(true);
 
-    _FromTxt.setText(emlhdr.from());
+    _FromTxt.setText(emlhdr.fromDisplayName());
     _ToTxt.setText(emlhdr.toList().join(","));
-    _CCTxt.setText(emlhdr.ccList().join(","));
-    _BCCTxt.setText(emlhdr.bccList().join(","));
     _SubjectTxt.setText(emlhdr.subject());
     _TimeStampTxt.setText(emlhdr.timeStamp());
+
+    if(emlhdr.ccList().count() > 0)
+    {
+        _CCLbl.setVisible(true);
+        _CCTxt.setText(emlhdr.ccList().join(","));
+    }
 
     bool bodyset = false;
 
@@ -129,7 +125,6 @@ void MailView::clear()
     _FromTxt.setText("");
     _ToTxt.setText("");
     _CCTxt.setText("");
-    _BCCTxt.setText("");
     _SubjectTxt.setText("");
     _TimeStampTxt.setText("");
     _Viewer.setText("");
@@ -138,8 +133,5 @@ void MailView::clear()
     _FromLbl.setVisible(false);
     _ToLbl.setVisible(false);
     _CCLbl.setVisible(false);
-    _BCCLbl.setVisible(false);
-    _SubjectLbl.setVisible(false);
-    _TimeStampLbl.setVisible(false);
     _AttachLbl.setVisible(false);
 }

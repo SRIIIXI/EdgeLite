@@ -159,6 +159,12 @@ MailListItemDelegate::MailListItemDelegate(QObject *parent)
 void MailListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     QIcon ic = QIcon(qvariant_cast<QPixmap>(index.data(Qt::DecorationRole)));
+
+    //if(ic.isNull())
+    //{
+    //    ic = QIcon(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48));
+    //}
+
     QString title = index.data(Qt::DisplayRole).toString();
     QString description = index.data(Qt::UserRole+1).toString();
     int imageSpace = 10;    QRect r = option.rect;
