@@ -6,6 +6,24 @@
 
 MainWindow* mainWindowPtr = nullptr;
 
+CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
+{
+    setLayout(&_Layout);
+    _Layout.setMargin(0);
+    _Layout.setSpacing(0);
+}
+
+CentralWidget::~CentralWidget()
+{
+
+}
+
+void CentralWidget::addWidget(QWidget *widget)
+{
+    _Layout.addWidget(widget);
+}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -27,10 +45,6 @@ bool MainWindow::initialize()
     setupViewPane();
 
     setCentralWidget(&_AppCentralWidget);
-
-    _AppCentralWidget.setOrientation(Qt::Horizontal);
-    _AppCentralWidget.setHandleWidth(1);
-    _AppCentralWidget.setFrameStyle(QFrame::Plain);
 
     _Contacts.setContactSelectionFlag(false);
     _Contacts.loadContacts();
@@ -216,16 +230,6 @@ void MainWindow::eventSearch()
 void MainWindow::eventRefresh()
 {
 
-}
-
-void MainWindow::eventAboutQt()
-{
-    QMessageBox::aboutQt(this, "About Qt");
-}
-
-void MainWindow::eventApplication()
-{
-    QMessageBox::about(this, "About " + mailClientPtr->applicationName(), tr("Light, fast and secure email client"));
 }
 
 void MainWindow::eventLoadingStarted()

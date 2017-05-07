@@ -167,7 +167,8 @@ void MailListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewIte
 
     QString title = index.data(Qt::DisplayRole).toString();
     QString description = index.data(Qt::UserRole+1).toString();
-    int imageSpace = 10;    QRect r = option.rect;
+    int imageSpace = 10;
+    QRect r = option.rect;
     bool isnew = index.data(Qt::UserRole+3).toBool();
 
     QPen penBlack(Qt::black, 1, Qt::SolidLine);
@@ -209,7 +210,7 @@ void MailListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewIte
 
     if (!ic.isNull())
     {
-        r = option.rect.adjusted(5, 10, -10, -10);
+        //r = option.rect.adjusted(5, 10, -10, -10);
         ic.paint(painter, r, Qt::AlignVCenter|Qt::AlignLeft);
         imageSpace = 55;
     }

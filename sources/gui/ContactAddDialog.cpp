@@ -1,21 +1,6 @@
 #include "ContactAddDialog.h"
 #include "ThemeManager.h"
 
-ClickableLabel::ClickableLabel(const QString& text, QWidget* parent)
-    : QLabel(parent)
-{
-    setText(text);
-}
-
-ClickableLabel::~ClickableLabel()
-{
-}
-
-void ClickableLabel::mousePressEvent(QMouseEvent* event)
-{
-    emit clicked();
-}
-
 ContactAddDialog::ContactAddDialog(QWidget *parent)
     : QDialog(parent)
 {

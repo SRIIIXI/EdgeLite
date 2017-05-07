@@ -14,9 +14,9 @@ ContactsView::ContactsView(QWidget *parent) : QWidget(parent)
 
     _ContactSelctionMode = true;
 
-    addAct = new QAction(QIcon(":images/contactadd.png"), tr("Add Entry..."), this);
-    editAct = new QAction(QIcon(":images/contactedit.png"), tr("Edit Entry..."), this);
-    removeAct = new QAction(QIcon(":images/contactdelete.png"), tr("Remove Entry"), this);
+    addAct = new QAction(QIcon(ApplicationThemeManager.contactAdd()), tr("Add Entry..."), this);
+    editAct = new QAction(QIcon(ApplicationThemeManager.contactEdit()), tr("Edit Entry..."), this);
+    removeAct = new QAction(QIcon(ApplicationThemeManager.conactRemove()), tr("Remove Entry"), this);
     editAct->setEnabled(false);
     removeAct->setEnabled(false);
 

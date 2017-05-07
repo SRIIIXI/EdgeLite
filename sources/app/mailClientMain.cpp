@@ -21,6 +21,31 @@ int main(int argc, char *argv[])
     ApplicationThemeManager.setAppThemeLight(app);
     ApplicationThemeManager.initFontPreference();
 
+    /*
+    // Load the source image.
+    QPixmap original(":images/splashscreen.png");
+    if (original.isNull()) {
+       qFatal("Failed to load.");
+       return -1;
+    }
+
+    // Draw the mask.
+    QBitmap  mask(original.size());
+    QPainter painter(&mask);
+    mask.fill(Qt::white);
+    painter.setBrush(Qt::black);
+    painter.drawEllipse(QPoint(mask.width()/2, mask.height()/2), 36, 36);
+
+    // Draw the final image.
+    original.setMask(mask);
+
+    // Show the result on the screen.
+    QLabel label;
+    label.setPixmap(original);
+    label.show();
+    return app->exec();
+    */
+
     //Create the main window
     //This will create the main window and the splashscreen pointer
     new MainWindow();

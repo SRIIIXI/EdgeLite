@@ -8,6 +8,8 @@
 #include <QIcon>
 #include <QPixmap>
 #include <QAction>
+#include <QBitmap>
+#include <QPainter>
 
 typedef enum ThemeType
 {
@@ -48,6 +50,13 @@ public:
     QString filter() { return _PixFileFilter; }
     QString unknown() { return _PixFileUnknown; }
 
+    QString contactAdd() { return _PixFileContactAdd; }
+    QString contactEdit() { return _PixFileContactEdit; }
+    QString conactRemove() { return _PixFileContactDelete; }
+
+    bool roundel(QString imgfile, int sz, QPixmap &destpix);
+    bool roundel(QPixmap origpix, int sz, QPixmap &destpix);
+
 private:
     void createPixmaps();
 
@@ -73,6 +82,10 @@ private:
     QString _PixFileRefresh;
     QString _PixFileFilter;
     QString _PixFileUnknown;
+
+    QString _PixFileContactAdd;
+    QString _PixFileContactEdit;
+    QString _PixFileContactDelete;
 };
 
 extern ThemeManager ApplicationThemeManager;

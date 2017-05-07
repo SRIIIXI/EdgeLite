@@ -1,6 +1,21 @@
 #include "CustomWidgets.h"
 #include "ThemeManager.h"
 
+ClickableLabel::ClickableLabel(const QString& text, QWidget* parent)
+    : QLabel(parent)
+{
+    setText(text);
+}
+
+ClickableLabel::~ClickableLabel()
+{
+}
+
+void ClickableLabel::mousePressEvent(QMouseEvent* event)
+{
+    emit clicked();
+}
+
 ImageLabel::ImageLabel(QWidget* ptr) : QWidget(ptr)
 {
     setMaximumHeight(60);

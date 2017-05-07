@@ -6,10 +6,9 @@
 #include <QToolBar>
 #include <QMenuBar>
 #include <QMenu>
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QtCore>
-#include <QSplitter>
 #include <QStatusBar>
 #include <QTabWidget>
 #include <QTabBar>
@@ -24,6 +23,17 @@
 #include "ContactsView.h"
 #include "AccountsConfigView.h"
 #include "SettingsView.h"
+
+class CentralWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    CentralWidget(QWidget *parent = nullptr);
+    ~CentralWidget();
+    void addWidget(QWidget *widget);
+private:
+    QHBoxLayout _Layout;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -57,9 +67,6 @@ protected slots:
     void eventSearch();
     void eventRefresh();
 
-    void eventAboutQt();
-    void eventApplication();
-
     void eventLoadingStarted();
     void eventLoadingFinished(long num);
     void eventFirstMailSelected();
@@ -71,11 +78,10 @@ protected slots:
     void eventProfileRemoved(QString emailId);
 
 private:
-    QSplitter       _AppCentralWidget;
+    CentralWidget _AppCentralWidget;
 
     AccountView    _AccountView;
     MailBoxView     _MailBoxView;
-
     QStackedWidget _ViewPane;
 
     MailView    _Mail;
@@ -87,4 +93,4 @@ private:
 
 extern MainWindow* mainWindowPtr;
 
-#endif // MAINWINDOW_H
+#endif

@@ -124,6 +124,10 @@ void ThemeManager::createPixmaps()
         _PixFileRefresh = ":images/dark/refresh.png";
         _PixFileFilter = ":images/dark/emailfilter.png";
         _PixFileUnknown = ":images/dark/unk.png";
+
+        _PixFileContactAdd = ":images/dark/contactadd.png";
+        _PixFileContactEdit = ":images/dark/contactedit.png";
+        _PixFileContactDelete = ":images/dark/contactdelete.png";
     }
 
     else
@@ -146,7 +150,58 @@ void ThemeManager::createPixmaps()
         _PixFileRefresh = ":images/light/refresh.png";
         _PixFileFilter = ":images/light/emailfilter.png";
         _PixFileUnknown = ":images/light/unk.png";
+
+        _PixFileContactAdd = ":images/light/contactadd.png";
+        _PixFileContactEdit = ":images/light/contactedit.png";
+        _PixFileContactDelete = ":images/light/contactdelete.png";
     }
+}
+
+bool ThemeManager::roundel(QString imgfile, int sz, QPixmap &destpix)
+{
+    destpix.load(imgfile);
+
+    if (destpix.isNull())
+    {
+       qFatal("Failed to load.");
+       return false;
+    }
+
+    destpix = destpix.scaled(sz, sz);
+
+    // Draw the mask.
+    QBitmap  mask(destpix.size());
+    QPainter painter(&mask);
+    mask.fill(Qt::white);
+    painter.setBrush(Qt::black);
+    painter.drawEllipse(QPoint(mask.width()/2, mask.height()/2), sz, sz);
+
+    // Draw the final image.
+    destpix.setMask(mask);
+
+    return true;
+}
+bool ThemeManager::roundel(QPixmap origpix, int sz, QPixmap &destpix)
+{
+    destpix = origpix;
+
+    if (destpix.isNull())
+    {
+       qFatal("Failed to load.");
+       return false;
+    }
+
+    // Draw the mask.
+    QBitmap  mask(destpix.size());
+    QPainter painter(&mask);
+    mask.fill(Qt::white);
+    painter.setBrush(Qt::black);
+    painter.drawEllipse(QPoint(mask.width()/2, mask.height()/2), sz, sz);
+
+    // Draw the final image.
+    destpix.setMask(mask);
+
+    return true;
 }
 
 IndicatorCircular::IndicatorCircular()
