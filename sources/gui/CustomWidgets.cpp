@@ -1,6 +1,25 @@
 #include "CustomWidgets.h"
 #include "ThemeManager.h"
 
+CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
+{
+    setLayout(&_Layout);
+    _Layout.setMargin(0);
+    _Layout.setSpacing(0);
+}
+
+CentralWidget::~CentralWidget()
+{
+
+}
+
+void CentralWidget::addWidget(QWidget *widget)
+{
+    _Layout.addWidget(widget);
+}
+
+////////////////////////////////////////
+
 OptionListItemDelegate::OptionListItemDelegate(bool large, QObject *parent)
 {
     _Large = large;
@@ -170,9 +189,10 @@ DataListItemDelegate::DataListItemDelegate(QObject *parent)
 
 }
 
-void DataListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+void DataListItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    QIcon ic = QIcon(qvariant_cast<QPixmap>(index.data(Qt::DecorationRole)));
+    QPixmap pix = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+    QIcon ic = QIcon(pix.scaled(42, 42));
 
     QString title = index.data(Qt::DisplayRole).toString();
     QString description = index.data(Qt::UserRole+1).toString();
@@ -183,6 +203,7 @@ void DataListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewIte
     QPen penBlack(Qt::black, 1, Qt::SolidLine);
     QPen penWhite(Qt::white, 1, Qt::SolidLine);
     QPen penNewMail(ApplicationThemeManager.palette().highlight(), 1, Qt::SolidLine);
+    //QPen penLine(QBrush(ApplicationThemeManager.palette().alternateBase()), 1);
 
     QFont fontHeadingNormal(ApplicationThemeManager.preferredFont(), 12, QFont::Normal);
     QFont fontDescriptionNormal(ApplicationThemeManager.preferredFont(), 9, QFont::Normal);
@@ -219,7 +240,9 @@ void DataListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewIte
 
     if (!ic.isNull())
     {
-        ic.paint(painter, r, Qt::AlignVCenter|Qt::AlignLeft);
+        QRect rpix = r;
+        rpix.setX(rpix.x()+9);
+        ic.paint(painter, rpix, Qt::AlignVCenter|Qt::AlignLeft);
         imageSpace = 55;
     }
 
@@ -248,6 +271,9 @@ void DataListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewIte
     }
 
     painter->drawText(r.left(), r.top(), r.width(), r.height(), Qt::AlignLeft, description, &r);
+
+    //painter->setPen(penLine);
+    //painter->drawLine(0, 59, 200, 59);
 }
 
 QSize DataListItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
@@ -287,28 +313,35 @@ void ActiveLabel::mousePressEvent(QMouseEvent* event)
     emit clicked();
 }
 
+////////////////////////////////////////
+
 RichLabel::RichLabel(QWidget* ptr) : QWidget(ptr)
 {
-    setMaximumHeight(60);
-    setMinimumHeight(60);
-    setMinimumWidth(250);
-    setMaximumWidth(250);
-
     _UnderLine = true;
     _ClickTrackingOn = false;
+    _Large = true;
+    _Bold = false;
+    _Height = 60;
+
+    setMaximumHeight(_Height);
+    setMinimumHeight(_Height);
+    //setMinimumWidth(250);
 }
 
 RichLabel::RichLabel(QString txt, QString fname, QWidget* ptr) : QWidget(ptr)
 {
-    setMaximumHeight(60);
-    setMinimumHeight(60);
-    setMinimumWidth(250);
-    setMaximumWidth(250);
+    _UnderLine = true;
+    _ClickTrackingOn = false;
+    _Large = true;
+    _Bold = false;
+    _Height = 60;
+
+    setMaximumHeight(_Height);
+    setMinimumHeight(_Height);
+    //setMinimumWidth(250);
 
     setText(txt);
     setImageFile(fname);
-    _UnderLine = true;
-    _ClickTrackingOn = false;
 }
 
 RichLabel::~RichLabel()
@@ -330,20 +363,42 @@ void RichLabel::setUnderline(bool fl)
     _UnderLine = fl;
 }
 
+void RichLabel::setLarge(bool largef)
+{
+    _Large = largef;
+
+    if(_Large)
+    {
+        _Height = 60;
+    }
+    else
+    {
+        _Height = 40;
+    }
+}
+
+void RichLabel::setBold(bool boldf)
+{
+    _Bold = boldf;
+}
+
 QSize RichLabel::sizeHint() const
 {
-    return QSize(250, 60);
+    int wd = parentWidget()->width();
+
+    return QSize(wd, _Height);
 }
 
 void RichLabel::paintEvent(QPaintEvent *event)
 {
-    QRect rcb(60, 0, 190, 60);
-    QRect rc(0, 0, 250, 60);
+    int wd = parentWidget()->width();
+    QRect rcb(_Height, 0, 190, _Height);
+    QRect rc(0, 0, wd, _Height);
 
     QFont fontHeadingHighlighted(ApplicationThemeManager.preferredFont(), 12, QFont::Normal);
     QPen penText(QBrush(ApplicationThemeManager.palette().text()), 1);
     QPen penBorder(QBrush(ApplicationThemeManager.palette().base()), 1);
-    QPen penLine(QBrush(ApplicationThemeManager.palette().alternateBase()), 1);
+    QPen penLine(QBrush(QColor(127,127,127)), 1);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -361,13 +416,16 @@ void RichLabel::paintEvent(QPaintEvent *event)
 
     if(!_Image.isNull())
     {
-        painter.drawPixmap(14, 14, 32, 32, _Image);
+        if(_Large)
+        {
+            painter.drawPixmap(14, 14, 32, 32, _Image);
+        }
     }
 
     if(_UnderLine)
     {
         painter.setPen(penLine);
-        painter.drawLine(0, 60, 250, 60);
+        painter.drawLine(0, _Height, wd, _Height);
     }
 }
 
@@ -384,7 +442,6 @@ void RichLabel::mouseReleaseEvent(QMouseEvent *event)
         _ClickTrackingOn = false;
     }
 }
-
 
 ////////////////////////////////////////////////////////
 
@@ -470,4 +527,32 @@ void Button::mouseReleaseEvent(QMouseEvent *event)
         emit clicked();
         _ClickTrackingOn = false;
     }
+}
+
+////////////////////////////////////////
+
+VerticalLine::VerticalLine(QWidget* ptr) : QWidget(ptr)
+{
+    setMinimumWidth(1);
+    setMaximumWidth(1);
+}
+
+VerticalLine::~VerticalLine()
+{
+}
+
+QSize VerticalLine::sizeHint() const
+{
+    int ht = parentWidget()->height();
+    return QSize(1, ht);
+}
+
+void VerticalLine::paintEvent(QPaintEvent *event)
+{
+    int ht = parentWidget()->height();
+    QPen penLine(QBrush(QColor(127,127,127)), 1);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(penLine);
+    painter.drawLine(0, 0, 1, ht);
 }

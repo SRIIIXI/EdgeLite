@@ -8,6 +8,7 @@ ContactsView::ContactsView(QWidget *parent) : QWidget(parent)
 {
     _CurrentItem = nullptr;
     _IsEdited = false;
+    _Heading.setText("Contacts Management");
     QStringList lst;
 
     lst << "Name" << "EMail Id";
@@ -42,6 +43,7 @@ ContactsView::ContactsView(QWidget *parent) : QWidget(parent)
     _SearchLayout.addWidget(&_TxtSearch);
     _SearchLayout.addWidget(&_BtnSearch);
 
+    _Layout.addWidget(&_Heading);
     _Layout.addWidget(&toolbar);
     _Layout.addLayout(&_SearchLayout);
     _Layout.addWidget(&_ContactListView);
@@ -74,6 +76,11 @@ ContactsView::ContactsView(QWidget *parent) : QWidget(parent)
     setMinimumWidth(640);
     setMaximumHeight(480);
     setMaximumWidth(640);
+}
+
+void ContactsView::resizeEvent(QResizeEvent *event)
+{
+    _Heading.resize(60, width());
 }
 
 void ContactsView::setContactSelectionFlag(bool flag)

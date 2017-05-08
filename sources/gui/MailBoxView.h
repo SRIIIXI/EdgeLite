@@ -109,6 +109,7 @@ private:
     QVBoxLayout _MainLayout;
     QLineEdit  _SearchBox;
     QToolBar    _Toolbar;
+    RichLabel _DirectoryName;
     DataList _MailList;
 
     QString _CurDir;

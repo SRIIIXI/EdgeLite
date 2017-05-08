@@ -6,24 +6,6 @@
 
 MainWindow* mainWindowPtr = nullptr;
 
-CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
-{
-    setLayout(&_Layout);
-    _Layout.setMargin(0);
-    _Layout.setSpacing(0);
-}
-
-CentralWidget::~CentralWidget()
-{
-
-}
-
-void CentralWidget::addWidget(QWidget *widget)
-{
-    _Layout.addWidget(widget);
-}
-
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -41,7 +23,9 @@ MainWindow::~MainWindow()
 bool MainWindow::initialize()
 {
     setupDirectoryView();
+    _AppCentralWidget.addWidget(&_Line1);
     setupMailBoxView();
+    _AppCentralWidget.addWidget(&_Line2);
     setupViewPane();
 
     setCentralWidget(&_AppCentralWidget);
@@ -123,7 +107,8 @@ void MainWindow::setupViewPane()
 
     _Contacts.loadContacts();
 
-    _ViewPane.setCurrentIndex(0);
+    //_ViewPane.setCurrentIndex(0);
+    _ViewPane.setCurrentIndex(1);
 }
 
 void MainWindow::eventExit()
@@ -238,6 +223,7 @@ void MainWindow::eventLoadingStarted()
 
 void MainWindow::eventLoadingFinished(long num)
 {
+    _ViewPane.setCurrentIndex(0);
     if(num < 3)
     {
 //        viewPrevious->setEnabled(false);

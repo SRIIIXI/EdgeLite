@@ -16,8 +16,9 @@ MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
     _Toolbar.addAction(_SearchAction);
     _Toolbar.addAction(_RefreshActon);
 
-    _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
+    _MainLayout.addWidget(&_DirectoryName, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_MailList, Qt::AlignLeft | Qt::AlignTop);
+    _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
 
     _MailList.setFrameStyle(QFrame::NoFrame);
 
@@ -55,6 +56,9 @@ void MailBoxView::eventLoadDirectory(ImapClient *ptr, QString uname, QString dir
     _Count = mcount;
     _NextUid = nextuid;
 
+    _DirectoryName.setText(dirname);
+    _DirectoryName.repaint();
+
     _MailList.clear();
 
     if(_MailViewPtr != nullptr)
@@ -78,7 +82,7 @@ void MailBoxView::eventLoadDirectory(ImapClient *ptr, QString uname, QString dir
         mailItem->setData(Qt::UserRole+2, QVariant(hdr.timeStamp()));
         mailItem->setData(Qt::UserRole+3, QVariant(false));
         QPixmap pix(ApplicationThemeManager.unknown());
-        mailItem->setData(Qt::DecorationRole, QVariant(pix.scaled(48, 48)));
+        mailItem->setData(Qt::DecorationRole, QVariant(pix));
         _MailList.insertItem(0, mailItem);
     }
 
@@ -162,6 +166,7 @@ void MailBoxView::eventMailSelected(QListWidgetItem *item)
         mc.retrieveMail(_CurrentMessageId, _CurrentBody);
         _CurrentHeader = _OldMailMap.value(_CurrentMessageId);
         _MailViewPtr->setMail(_CurrentHeader, _CurrentBody);
+        emit loadingFinished(_CurrentMessageNo);
     }
 }
 
@@ -194,7 +199,7 @@ void MailBoxView::eventHeaderReceived(QString uname, QString dirname, long msgno
         mailItem->setData(Qt::UserRole+3, QVariant(true));
         mailItem->setData(Qt::UserRole+4, QVariant((int)msgno));
         QPixmap pix(ApplicationThemeManager.unknown());
-        mailItem->setData(Qt::DecorationRole, QVariant(pix.scaled(48, 48)));
+        mailItem->setData(Qt::DecorationRole, QVariant(pix));
         _MailList.insertItem(0, mailItem);
 
         _NewMailMap.insert(msgno, emlhdr);

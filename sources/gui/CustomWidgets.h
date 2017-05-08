@@ -7,6 +7,20 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QListWidget>
+#include <QHBoxLayout>
+
+class CentralWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    CentralWidget(QWidget *parent = nullptr);
+    ~CentralWidget();
+    void addWidget(QWidget *widget);
+private:
+    QHBoxLayout _Layout;
+};
+
+////////////////////////////////////////
 
 class OptionListItemDelegate : public QAbstractItemDelegate
 {
@@ -75,6 +89,8 @@ public:
     void setText(QString txt);
     void setImageFile(QString fname);
     void setUnderline(bool fl = true);
+    void setLarge(bool largef);
+    void setBold(bool boldf);
 
 signals:
     void clicked();
@@ -82,7 +98,6 @@ signals:
 protected:
     QSize sizeHint() const;
     void paintEvent(QPaintEvent *event) override;
-
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
@@ -91,6 +106,9 @@ private:
     QPixmap _Image;
     bool    _UnderLine;
     bool    _ClickTrackingOn;
+    bool    _Large;
+    int     _Height;
+    bool    _Bold;
 };
 
 ////////////////////////////////////////
@@ -118,6 +136,19 @@ private:
     QString _Text;
     QPixmap _Image;
     bool    _ClickTrackingOn;
+};
+
+////////////////////////////////////////
+
+class VerticalLine : public QWidget
+{
+    Q_OBJECT
+public:
+    VerticalLine(QWidget* ptr = nullptr);
+    virtual ~VerticalLine();
+protected:
+    QSize sizeHint() const;
+    void paintEvent(QPaintEvent *event) override;
 };
 
 #endif

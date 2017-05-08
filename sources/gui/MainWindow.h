@@ -23,17 +23,6 @@
 #include "AccountsConfigView.h"
 #include "SettingsView.h"
 
-class CentralWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    CentralWidget(QWidget *parent = nullptr);
-    ~CentralWidget();
-    void addWidget(QWidget *widget);
-private:
-    QHBoxLayout _Layout;
-};
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -88,6 +77,9 @@ private:
     MailNewView _NewMail;
     AccountsConfigView _Accounts;
     SettingsView _Settings;
+
+    VerticalLine _Line1;
+    VerticalLine _Line2;
 };
 
 extern MainWindow* mainWindowPtr;

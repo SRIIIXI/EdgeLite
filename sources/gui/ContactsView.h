@@ -16,7 +16,7 @@
 #include <QFileDialog>
 #include <QMenuBar>
 #include <QVBoxLayout>
-
+#include "CustomWidgets.h"
 
 class ContactsView : public QWidget
 {
@@ -39,7 +39,11 @@ private slots:
     void insertBcc();
     void search();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private:
+    RichLabel _Heading;
     QAction *addAct;
     QAction *editAct;
     QAction *removeAct;
@@ -63,7 +67,6 @@ private:
     QHBoxLayout _SearchLayout;
     QGridLayout _ContactSelectionLayout;
     QVBoxLayout _Layout;
-
 
     bool _ContactSelctionMode;
     QString _CurrentEmail;
