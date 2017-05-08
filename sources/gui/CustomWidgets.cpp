@@ -1,22 +1,293 @@
 #include "CustomWidgets.h"
 #include "ThemeManager.h"
 
-ClickableLabel::ClickableLabel(const QString& text, QWidget* parent)
+OptionListItemDelegate::OptionListItemDelegate(bool large, QObject *parent)
+{
+    _Large = large;
+
+    if(_Large)
+    {
+        _Height = 60;
+    }
+    else
+    {
+        _Height = 40;
+    }
+}
+
+void OptionListItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+    if(_Large)
+    {
+        paintLarge(painter, option, index);
+    }
+    else
+    {
+        paintSmall(painter, option, index);
+    }
+}
+
+void OptionListItemDelegate::paintLarge(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+    QIcon ic = QIcon(qvariant_cast<QPixmap>(index.data(Qt::DecorationRole)));
+    QString title = index.data(Qt::DisplayRole).toString();
+    QString description = index.data(Qt::UserRole).toString();
+    int imageSpace = 10;    QRect r = option.rect;
+
+    QPen penBlack(Qt::black, 1, Qt::SolidLine);
+    QPen penWhite(Qt::white, 1, Qt::SolidLine);
+
+    QFont fontHeadingNormal(ApplicationThemeManager.preferredFont(), 11, QFont::Normal);
+    QFont fontDescriptionNormal(ApplicationThemeManager.preferredFont(), 10, QFont::Normal);
+    QFont fontHeadingHighlighted(ApplicationThemeManager.preferredFont(), 11, QFont::Bold);
+    QFont fontDescriptionHighlighted(ApplicationThemeManager.preferredFont(), 10, QFont::Bold);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setBrush(ApplicationThemeManager.palette().highlight());
+    }
+    else
+    {
+        painter->setBrush(Qt::white);
+    }
+
+    painter->setPen(penWhite);
+    painter->drawRect(r);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setPen(penWhite);
+    }
+    else
+    {
+        painter->setPen(penBlack);
+    }
+
+    if (!ic.isNull())
+    {
+        r = option.rect.adjusted(5, 10, -10, -10);
+        ic.paint(painter, r, Qt::AlignVCenter|Qt::AlignLeft);
+        imageSpace = 55;
+    }
+
+    r = option.rect.adjusted(imageSpace, 0, -10, -30);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setFont(fontHeadingHighlighted);
+    }
+    else
+    {
+        painter->setFont(fontHeadingNormal);
+    }
+
+    painter->drawText(r.left(), r.top(), r.width(), r.height(), Qt::AlignBottom|Qt::AlignLeft, title, &r);
+
+    r = option.rect.adjusted(imageSpace, 30, -10, 0);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setFont(fontDescriptionHighlighted);
+    }
+    else
+    {
+        painter->setFont(fontDescriptionNormal);
+    }
+
+    painter->drawText(r.left(), r.top(), r.width(), r.height(), Qt::AlignLeft, description, &r);
+}
+
+void OptionListItemDelegate::paintSmall(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    QIcon ic = QIcon(qvariant_cast<QPixmap>(index.data(Qt::DecorationRole)));
+    QString title = index.data(Qt::DisplayRole).toString();
+    QString description = index.data(Qt::UserRole).toString();
+    QRect r = option.rect;
+
+    QPen penBlack(Qt::black, 1, Qt::SolidLine);
+    QPen penWhite(Qt::white, 1, Qt::SolidLine);
+
+    QFont fontHeadingNormal(ApplicationThemeManager.preferredFont(), 11, QFont::Normal);
+    QFont fontHeadingHighlighted(ApplicationThemeManager.preferredFont(), 11, QFont::Bold);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setBrush(ApplicationThemeManager.palette().highlight());
+    }
+    else
+    {
+        painter->setBrush(Qt::white);
+    }
+
+    painter->setPen(penWhite);
+    painter->drawRect(r);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setPen(penWhite);
+    }
+    else
+    {
+        painter->setPen(penBlack);
+    }
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setFont(fontHeadingHighlighted);
+    }
+    else
+    {
+        painter->setFont(fontHeadingNormal);
+    }
+
+    painter->drawText(r.left() + 55 , r.top(), r.width(), r.height(), Qt::AlignVCenter|Qt::AlignLeft, title, &r);
+}
+
+QSize OptionListItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    return QSize(200, _Height);
+}
+
+OptionListItemDelegate::~OptionListItemDelegate()
+{
+
+}
+
+OptionList::OptionList(bool large)
+{
+    setItemDelegate(new OptionListItemDelegate(large, this));
+}
+
+OptionList::~OptionList()
+{
+
+}
+
+////////////////////////////////////////
+
+DataListItemDelegate::DataListItemDelegate(QObject *parent)
+{
+
+}
+
+void DataListItemDelegate::paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    QIcon ic = QIcon(qvariant_cast<QPixmap>(index.data(Qt::DecorationRole)));
+
+    QString title = index.data(Qt::DisplayRole).toString();
+    QString description = index.data(Qt::UserRole+1).toString();
+    int imageSpace = 10;
+    QRect r = option.rect;
+    bool isnew = index.data(Qt::UserRole+3).toBool();
+
+    QPen penBlack(Qt::black, 1, Qt::SolidLine);
+    QPen penWhite(Qt::white, 1, Qt::SolidLine);
+    QPen penNewMail(ApplicationThemeManager.palette().highlight(), 1, Qt::SolidLine);
+
+    QFont fontHeadingNormal(ApplicationThemeManager.preferredFont(), 12, QFont::Normal);
+    QFont fontDescriptionNormal(ApplicationThemeManager.preferredFont(), 9, QFont::Normal);
+    QFont fontHeadingHighlighted(ApplicationThemeManager.preferredFont(), 12, QFont::Normal);
+    QFont fontDescriptionHighlighted(ApplicationThemeManager.preferredFont(), 9, QFont::Normal);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setBrush(ApplicationThemeManager.palette().highlight());
+    }
+    else
+    {
+        painter->setBrush(ApplicationThemeManager.palette().base());
+    }
+
+    painter->setPen(penWhite);
+    painter->drawRect(r);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setPen(penWhite);
+    }
+    else
+    {
+        if(isnew)
+        {
+            painter->setPen(penNewMail);
+        }
+        else
+        {
+            painter->setPen(penBlack);
+        }
+    }
+
+    if (!ic.isNull())
+    {
+        ic.paint(painter, r, Qt::AlignVCenter|Qt::AlignLeft);
+        imageSpace = 55;
+    }
+
+    r = option.rect.adjusted(imageSpace, 0, -10, -30);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setFont(fontHeadingHighlighted);
+    }
+    else
+    {
+        painter->setFont(fontHeadingNormal);
+    }
+
+    painter->drawText(r.left(), r.top(), r.width(), r.height(), Qt::AlignBottom|Qt::AlignLeft, title, &r);
+
+    r = option.rect.adjusted(imageSpace, 30, -10, 0);
+
+    if(option.state & QStyle::State_Selected)
+    {
+        painter->setFont(fontDescriptionHighlighted);
+    }
+    else
+    {
+        painter->setFont(fontDescriptionNormal);
+    }
+
+    painter->drawText(r.left(), r.top(), r.width(), r.height(), Qt::AlignLeft, description, &r);
+}
+
+QSize DataListItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    return QSize(200, 60);
+}
+
+DataListItemDelegate::~DataListItemDelegate()
+{
+
+}
+
+DataList::DataList()
+{
+    setItemDelegate(new DataListItemDelegate(this));
+}
+
+DataList::~DataList()
+{
+
+}
+
+////////////////////////////////////////
+
+ActiveLabel::ActiveLabel(const QString& text, QWidget* parent)
     : QLabel(parent)
 {
     setText(text);
 }
 
-ClickableLabel::~ClickableLabel()
+ActiveLabel::~ActiveLabel()
 {
 }
 
-void ClickableLabel::mousePressEvent(QMouseEvent* event)
+void ActiveLabel::mousePressEvent(QMouseEvent* event)
 {
     emit clicked();
 }
 
-ImageLabel::ImageLabel(QWidget* ptr) : QWidget(ptr)
+RichLabel::RichLabel(QWidget* ptr) : QWidget(ptr)
 {
     setMaximumHeight(60);
     setMinimumHeight(60);
@@ -27,7 +298,7 @@ ImageLabel::ImageLabel(QWidget* ptr) : QWidget(ptr)
     _ClickTrackingOn = false;
 }
 
-ImageLabel::ImageLabel(QString txt, QString fname, QWidget* ptr) : QWidget(ptr)
+RichLabel::RichLabel(QString txt, QString fname, QWidget* ptr) : QWidget(ptr)
 {
     setMaximumHeight(60);
     setMinimumHeight(60);
@@ -40,31 +311,31 @@ ImageLabel::ImageLabel(QString txt, QString fname, QWidget* ptr) : QWidget(ptr)
     _ClickTrackingOn = false;
 }
 
-ImageLabel::~ImageLabel()
+RichLabel::~RichLabel()
 {
 }
 
-void ImageLabel::setText(QString txt)
+void RichLabel::setText(QString txt)
 {
     _Text = txt;
 }
 
-void ImageLabel::setImageFile(QString fname)
+void RichLabel::setImageFile(QString fname)
 {
     _Image = QPixmap(fname).scaled(32, 32);
 }
 
-void ImageLabel::setUnderline(bool fl)
+void RichLabel::setUnderline(bool fl)
 {
     _UnderLine = fl;
 }
 
-QSize ImageLabel::sizeHint() const
+QSize RichLabel::sizeHint() const
 {
     return QSize(250, 60);
 }
 
-void ImageLabel::paintEvent(QPaintEvent *event)
+void RichLabel::paintEvent(QPaintEvent *event)
 {
     QRect rcb(60, 0, 190, 60);
     QRect rc(0, 0, 250, 60);
@@ -100,12 +371,12 @@ void ImageLabel::paintEvent(QPaintEvent *event)
     }
 }
 
-void ImageLabel::mousePressEvent(QMouseEvent *event)
+void RichLabel::mousePressEvent(QMouseEvent *event)
 {
     _ClickTrackingOn = true;
 }
 
-void ImageLabel::mouseReleaseEvent(QMouseEvent *event)
+void RichLabel::mouseReleaseEvent(QMouseEvent *event)
 {
     if(_ClickTrackingOn)
     {

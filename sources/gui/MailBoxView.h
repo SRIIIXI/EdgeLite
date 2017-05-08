@@ -9,6 +9,7 @@
 #include "MailView.h"
 #include "ImapClient.h"
 #include "Mail.h"
+#include "CustomWidgets.h"
 
 /*
 class MailBoxView : public QTreeWidget
@@ -108,7 +109,7 @@ private:
     QVBoxLayout _MainLayout;
     QLineEdit  _SearchBox;
     QToolBar    _Toolbar;
-    QListWidget _MailList;
+    DataList _MailList;
 
     QString _CurDir;
     QString _CurMailId;

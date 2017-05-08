@@ -85,7 +85,7 @@ ContactAddDialog::ContactAddDialog(QWidget *parent)
 
     connect(&okButton, &QAbstractButton::clicked, this, &QDialog::accept);
     connect(&cancelButton, &QAbstractButton::clicked, this, &QDialog::reject);
-    connect(&picWidget, &ClickableLabel::clicked, this, &ContactAddDialog::pictureSelect);
+    connect(&picWidget, &ActiveLabel::clicked, this, &ContactAddDialog::pictureSelect);
 
     setWindowTitle(tr("Add a Contact"));
     QIcon icon(":/images/contact.png");

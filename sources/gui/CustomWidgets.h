@@ -6,27 +6,72 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QLabel>
+#include <QListWidget>
 
-class ClickableLabel : public QLabel
+class OptionListItemDelegate : public QAbstractItemDelegate
 {
-Q_OBJECT
 public:
-    explicit ClickableLabel( const QString& text="", QWidget* parent=0 );
-    ~ClickableLabel();
+    OptionListItemDelegate(bool large = true, QObject *parent = 0);
+    void paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+    virtual ~OptionListItemDelegate();
+private:
+    void paintLarge(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    void paintSmall(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    bool _Large;
+    int  _Height;
+};
+
+class OptionList : public QListWidget
+{
+    Q_OBJECT
+public:
+    OptionList(bool large);
+    virtual ~OptionList();
+};
+
+////////////////////////////////////////
+
+class DataListItemDelegate : public QAbstractItemDelegate
+{
+public:
+    DataListItemDelegate(QObject *parent = 0);
+    void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint (const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+    virtual ~DataListItemDelegate();
+};
+
+class DataList : public QListWidget
+{
+    Q_OBJECT
+public:
+    DataList();
+    virtual ~DataList();
+};
+
+////////////////////////////////////////
+
+class ActiveLabel : public QLabel
+{
+    Q_OBJECT
+public:
+    explicit ActiveLabel( const QString& text="", QWidget* parent=0 );
+    ~ActiveLabel();
 signals:
     void clicked();
 protected:
     void mousePressEvent(QMouseEvent* event);
 };
 
-class ImageLabel : public QWidget
+////////////////////////////////////////
+
+class RichLabel : public QWidget
 {
     Q_OBJECT
-
 public:
-    ImageLabel(QWidget* ptr = nullptr);
-    ImageLabel(QString txt, QString fname, QWidget* ptr = nullptr);
-    virtual ~ImageLabel();
+    RichLabel(QWidget* ptr = nullptr);
+    RichLabel(QString txt, QString fname, QWidget* ptr = nullptr);
+    virtual ~RichLabel();
     void setText(QString txt);
     void setImageFile(QString fname);
     void setUnderline(bool fl = true);
@@ -53,7 +98,6 @@ private:
 class Button : public QWidget
 {
     Q_OBJECT
-
 public:
     Button(QWidget* ptr = nullptr);
     Button(QString txt, QString fname, QWidget* ptr = nullptr);

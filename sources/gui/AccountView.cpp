@@ -1,8 +1,7 @@
 #include "AccountView.h"
-#include "ItemDelegates.h"
 #include "ThemeManager.h"
 
-AccountView::AccountView(QWidget *parent) : QWidget(parent)
+AccountView::AccountView(QWidget *parent) : QWidget(parent), _AccountList(true), _DirectoryList(false)
 {
     _NewMailLabel.setText("New mail");
     _NewMailLabel.setImageFile(":images/light/newemail.png");
@@ -12,10 +11,6 @@ AccountView::AccountView(QWidget *parent) : QWidget(parent)
 
     _DirectoryLabel.setText("Folders");
     _DirectoryLabel.setImageFile(":images/light/folder.png");
-
-    _AccountList.setItemDelegate(new AccountListItemDelegate(&_AccountList));
-
-    _DirectoryList.setItemDelegate(new DirectoryListItemDelegate(&_DirectoryList));
 
     _AccountList.setFrameStyle(QFrame::NoFrame);
     _DirectoryList.setFrameStyle(QFrame::NoFrame);
@@ -29,7 +24,7 @@ AccountView::AccountView(QWidget *parent) : QWidget(parent)
     _Toolbar.addAction(_AccountsAction);
     _Toolbar.addAction(_SettingsAction);
 
-    connect(&_NewMailLabel, &ImageLabel::clicked, this, &AccountView::eventNewEmail);
+    connect(&_NewMailLabel, &RichLabel::clicked, this, &AccountView::eventNewEmail);
     connect(_ContactsAction, &QAction::triggered, this, &AccountView::eventContacts);
     connect(_AccountsAction, &QAction::triggered, this, &AccountView::eventAccounts);
     connect(_SettingsAction, &QAction::triggered, this, &AccountView::eventSettings);

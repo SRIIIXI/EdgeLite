@@ -3,7 +3,6 @@
 #include "MailBoxEntity.h"
 #include "Mail.h"
 #include "MailStorage.h"
-#include "ItemDelegates.h"
 #include "ThemeManager.h"
 
 MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
@@ -19,7 +18,8 @@ MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
 
     _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_MailList, Qt::AlignLeft | Qt::AlignTop);
-    _MailList.setItemDelegate(new MailListItemDelegate(&_MailList));
+
+    _MailList.setFrameStyle(QFrame::NoFrame);
 
     _MainLayout.addStretch(0);
 

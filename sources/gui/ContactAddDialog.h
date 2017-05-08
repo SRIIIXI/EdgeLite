@@ -85,7 +85,7 @@ private:
 
     QPushButton okButton;
     QPushButton cancelButton;
-    ClickableLabel picWidget;
+    ActiveLabel picWidget;
 
     QGridLayout gLayout;
     QHBoxLayout buttonLayout;

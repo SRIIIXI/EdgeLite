@@ -53,11 +53,11 @@ private:
 
     QVBoxLayout _MainLayout;
 
-    ImageLabel _NewMailLabel;
-    ImageLabel  _AccountsLabel;
-    QListWidget _AccountList;
-    QListWidget _DirectoryList;
-    ImageLabel  _DirectoryLabel;
+    RichLabel _NewMailLabel;
+    RichLabel  _AccountsLabel;
+    OptionList _AccountList;
+    OptionList _DirectoryList;
+    RichLabel  _DirectoryLabel;
 
     QToolBar    _Toolbar;
     QAction* _ContactsAction;
