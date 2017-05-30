@@ -84,4 +84,6 @@ private:
 
 extern MainWindow* mainWindowPtr;
 
+extern ContactsView* contactsWindow;
+
 #endif

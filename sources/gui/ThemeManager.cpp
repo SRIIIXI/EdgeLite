@@ -61,7 +61,7 @@ void ThemeManager::setAppThemeLight(QApplication* ptr)
     _ApplicationPalette.setColor(QPalette::Highlight, QColor(15, 122 , 253));
     _ApplicationPalette.setColor(QPalette::HighlightedText, Qt::white);
     ptr->setPalette(_ApplicationPalette);
-    ptr->setStyleSheet("QToolTip { color: #000000; background-white: #2a82da; border: 1px solid black; }");
+    ptr->setStyleSheet("QToolTip { color: #000000; background-color: #2a82da; border: 1px solid black; }");
 #endif
     _ThemeType = Light;
     createPixmaps();

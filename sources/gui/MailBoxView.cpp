@@ -16,8 +16,10 @@ MailBoxView::MailBoxView(QWidget *parent) : QWidget(parent)
     _Toolbar.addAction(_SearchAction);
     _Toolbar.addAction(_RefreshActon);
 
+    _MainLayout.addWidget(new HorizontalLine(), Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_DirectoryName, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_MailList, Qt::AlignLeft | Qt::AlignTop);
+    _MainLayout.addWidget(new HorizontalLine(), Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
 
     _MailList.setFrameStyle(QFrame::NoFrame);

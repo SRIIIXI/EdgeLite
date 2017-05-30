@@ -5,9 +5,6 @@ SettingsView::SettingsView(QWidget *parent) :
     QWidget(parent)
 {
     setMinimumWidth(480);
-    setMinimumWidth(360);
-    setMaximumHeight(480);
-    setMaximumWidth(390);
 
     _lblGeneralSettings.setText("General Settings");
     _lblAutomark.setText("Automatically messages as read");
@@ -84,8 +81,6 @@ SettingsView::SettingsView(QWidget *parent) :
 
     setWindowIcon(QIcon(":/images/settings.png"));
     setWindowTitle(tr("Settings"));
-
-    //adjustBackground(this);
 }
 
 void SettingsView::eventSave()

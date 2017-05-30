@@ -29,12 +29,14 @@ AccountView::AccountView(QWidget *parent) : QWidget(parent), _AccountList(true),
     connect(_AccountsAction, &QAction::triggered, this, &AccountView::eventAccounts);
     connect(_SettingsAction, &QAction::triggered, this, &AccountView::eventSettings);
 
+    _MainLayout.addWidget(new HorizontalLine(), Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_NewMailLabel, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_AccountsLabel, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_AccountList, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_DirectoryLabel, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_DirectoryList, Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addStretch(0);
+    _MainLayout.addWidget(new HorizontalLine(), Qt::AlignLeft | Qt::AlignTop);
     _MainLayout.addWidget(&_Toolbar, Qt::AlignLeft | Qt::AlignTop);
 
     connect(&_AccountList, &QListWidget::itemClicked, this, &AccountView::eventAccountSelected);

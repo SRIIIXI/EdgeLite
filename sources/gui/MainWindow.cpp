@@ -6,6 +6,8 @@
 
 MainWindow* mainWindowPtr = nullptr;
 
+ContactsView* contactsWindow = nullptr;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -120,6 +122,14 @@ void MainWindow::eventContacts()
 {
     _Contacts.setContactSelectionFlag(false);
     _ViewPane.setCurrentIndex(1);
+
+    if(contactsWindow == nullptr)
+    {
+        contactsWindow = new ContactsView();
+    }
+
+    contactsWindow->setContactSelectionFlag(false);
+    contactsWindow->show();
 }
 
 void MainWindow::eventNewMail()

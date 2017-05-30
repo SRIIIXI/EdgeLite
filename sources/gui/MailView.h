@@ -4,11 +4,13 @@
 #include <QtCore>
 #include <QWidget>
 #include <QGridLayout>
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QTextBrowser>
 #include <QListWidget>
 #include <QPushButton>
 
+#include "CustomWidgets.h"
 #include "Mail.h"
 #include "ThemeManager.h"
 
@@ -21,10 +23,10 @@ public:
     void clear();
 
 private:
-    QGridLayout _Layout;
-    QGridLayout _WidgetLayout;
+    QGridLayout _ControlGrid;
+    QVBoxLayout _WidgetLayout;
 
-    QLabel _FromLbl;
+    QLabel _FromPix;
     QLabel _ToLbl;
     QLabel _CCLbl;
     QLabel _AttachLbl;

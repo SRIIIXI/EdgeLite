@@ -554,5 +554,33 @@ void VerticalLine::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(penLine);
-    painter.drawLine(0, 0, 1, ht);
+    painter.drawLine(0, 0, 0, ht);
+}
+
+////////////////////////////////////////
+
+HorizontalLine::HorizontalLine(QWidget* ptr) : QWidget(ptr)
+{
+    setMinimumHeight(1);
+    setMaximumHeight(1);
+}
+
+HorizontalLine::~HorizontalLine()
+{
+}
+
+QSize HorizontalLine::sizeHint() const
+{
+    int wd = parentWidget()->width();
+    return QSize(wd, 1);
+}
+
+void HorizontalLine::paintEvent(QPaintEvent *event)
+{
+    int wd = parentWidget()->width();
+    QPen penLine(QBrush(QColor(127,127,127)), 1);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(penLine);
+    painter.drawLine(0, 0, wd, 0);
 }

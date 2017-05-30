@@ -3,30 +3,32 @@
 
 MailView::MailView(QWidget *parent) : QWidget(parent)
 {
-    _Layout.addWidget(&_FromLbl, 0, 0, 2, 1);
+    _ControlGrid.setMargin(5);
 
-    _Layout.addWidget(&_FromTxt, 0, 1, 1, 1);
+    _ControlGrid.addWidget(&_FromPix, 1, 0, 2, 1);
 
-    _Layout.addWidget(&_TimeStampTxt, 1, 1, 1, 1);
+    _ControlGrid.addWidget(&_FromTxt, 1, 1, 1, 1);
 
-    _Layout.addWidget(&_SubjectTxt, 3, 0, 1, 2);
+    _ControlGrid.addWidget(&_TimeStampTxt, 2, 1, 1, 1);
 
-    _Layout.addWidget(&_ToLbl, 4, 0, 1, 1);
-    _Layout.addWidget(&_ToTxt, 4, 1, 1, 1);
+    _ControlGrid.addWidget(&_SubjectTxt, 4, 0, 1, 2);
 
-    _Layout.addWidget(&_CCLbl, 5, 0, 1, 1);
-    _Layout.addWidget(&_CCTxt, 5, 1, 1, 1);
+    _ControlGrid.addWidget(&_ToLbl, 5, 0, 1, 1);
+    _ControlGrid.addWidget(&_ToTxt, 5, 1, 1, 1);
 
-    _Layout.addWidget(&_AttachLbl, 6, 0, 1, 1);
-    _Layout.addWidget(&_FileList, 6, 1, 1, 1);
+    _ControlGrid.addWidget(&_CCLbl, 6, 0, 1, 1);
+    _ControlGrid.addWidget(&_CCTxt, 6, 1, 1, 1);
 
-    _Layout.addWidget(&_Viewer, 8, 0, 1, 2);
+    _ControlGrid.addWidget(&_AttachLbl, 7, 0, 1, 1);
+    _ControlGrid.addWidget(&_FileList, 7, 1, 1, 1);
+
+    _ControlGrid.addWidget(&_Viewer, 7, 0, 1, 2);
 
     _ToLbl.setText("To: ");
     _CCLbl.setText("Cc: ");
     _AttachLbl.setText("Attachments: ");
 
-    _FromLbl.setMaximumWidth(75);
+    _FromPix.setMaximumWidth(75);
     _ToLbl.setMaximumWidth(75);
     _CCLbl.setMaximumWidth(75);
     _AttachLbl.setMaximumWidth(75);
@@ -39,15 +41,16 @@ MailView::MailView(QWidget *parent) : QWidget(parent)
     _FileList.setSpacing(0);
     _Viewer.setFrameStyle(QFrame::NoFrame);
 
-    _FromLbl.setVisible(false);
+    _FromPix.setVisible(false);
     _ToLbl.setVisible(false);
     _CCLbl.setVisible(false);
     _AttachLbl.setVisible(false);
     _FileList.setVisible(false);
 
-    _Layout.setMargin(0);
-    _Layout.setSpacing(0);
-    _WidgetLayout.addLayout(&_Layout, 0, 0);
+    _WidgetLayout.setMargin(0);
+    _WidgetLayout.setSpacing(0);
+    _WidgetLayout.addWidget(new HorizontalLine());
+    _WidgetLayout.addLayout(&_ControlGrid);
     setLayout(&_WidgetLayout);
 
     QFont ftfrom(ApplicationThemeManager.preferredFont(), 11);
@@ -57,14 +60,14 @@ MailView::MailView(QWidget *parent) : QWidget(parent)
     ftsubj.setBold(true);
     _SubjectTxt.setFont(ftsubj);
 
-    _FromLbl.setPixmap(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48));
+    _FromPix.setPixmap(QPixmap(ApplicationThemeManager.unknown()).scaled(48, 48));
  }
 
 void MailView::setMail(MailHeader emlhdr, MailBody emlbdy)
 {
     _RawBody = emlbdy;
 
-    _FromLbl.setVisible(true);
+    _FromPix.setVisible(true);
     _ToLbl.setVisible(true);
 
     _FromTxt.setText(emlhdr.fromDisplayName());
@@ -90,7 +93,9 @@ void MailView::setMail(MailHeader emlhdr, MailBody emlbdy)
             {
                 if(emlbdy.mimeNodes()->at(ctr).NodeType == MimeType::Html)
                 {
-                    _Viewer.setHtml(emlbdy.mimeNodes()->at(ctr).Data);
+                    QString str = emlbdy.mimeNodes()->at(ctr).Data;
+                    str = str.replace("3D\"#", "\"#");
+                    _Viewer.setHtml(str);
                     bodyset = true;
                     break;
                 }
@@ -130,7 +135,7 @@ void MailView::clear()
     _Viewer.setText("");
     _FileList.clear();
 
-    _FromLbl.setVisible(false);
+    _FromPix.setVisible(false);
     _ToLbl.setVisible(false);
     _CCLbl.setVisible(false);
     _AttachLbl.setVisible(false);

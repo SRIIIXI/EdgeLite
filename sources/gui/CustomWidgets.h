@@ -151,4 +151,17 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 };
 
+////////////////////////////////////////
+
+class HorizontalLine : public QWidget
+{
+    Q_OBJECT
+public:
+    HorizontalLine(QWidget* ptr = nullptr);
+    virtual ~HorizontalLine();
+protected:
+    QSize sizeHint() const;
+    void paintEvent(QPaintEvent *event) override;
+};
+
 #endif
