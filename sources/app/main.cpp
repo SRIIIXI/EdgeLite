@@ -2,12 +2,13 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include <QDir>
+#include <QFileDialog>
 #include "Tracks.h"
 #include "MainWindow.h"
 #include "ThemeManager.h"
 
 int main(int argc, char *argv[])
-{
+{   
     Tracks* app = new Tracks(argc, argv);
     Q_INIT_RESOURCE(Resources);
 
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
     //This will create the main window and the splashscreen pointer
     new MainWindow();
 
-    tracksPtr->showMessage("Initializing main window");
+    app->showMessage("Initializing main window");
     if(!mainWindowPtr->initialize())
     {
         QMessageBox msg;
@@ -23,9 +24,9 @@ int main(int argc, char *argv[])
         msg.exec();
     }
 
-    tracksPtr->showMessage("Creating sub windows");
+    app->showMessage("Creating sub windows");
 
-    tracksPtr->start();
+    app->start();
 
     return app->exec();
 }

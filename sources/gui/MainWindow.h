@@ -11,6 +11,7 @@
 #include <QtCore>
 #include <QStatusBar>
 #include <QTabWidget>
+#include <QProgressBar>
 #include <QTabBar>
 #include <QStackedWidget>
 #include <QMap>
@@ -20,7 +21,7 @@
 #include "ThemeManager.h"
 #include "ServiceInterface.h"
 #include "Tracks.h"
-#include "RecordingView.h"
+#include "LiveStreamView.h"
 #include "NetworkView.h"
 #include "StatisticsView.h"
 #include "ConfigurationView.h"
@@ -33,23 +34,28 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     bool initialize();
-
+    void clearStatusBar();
+    void setStatusMessage(QString str);
+    void setProgressMessage(QString str);
 protected:
     void setupDirectoryView();
     void setupViewPane();
-
+    void resizeEvent(QResizeEvent *event) override;
 protected slots:
     void eventOptionSelected(int index);
 
 private:
     CentralWidget _AppCentralWidget;
+    QStatusBar      _AppStatusBar;
+    QLabel          _StatusMessage;
+    QLabel    _ProgressIndicator;
 
     SideBar    _OptionsMenuView;
     QStackedWidget _ViewPane;
     VerticalLine _ViewSeparator;
     QMap<QString, ServiceInterface*> _CamList;
 
-    RecordingView _Recordings;
+    LiveStreamView _Recordings;
     NetworkView _Network;
     ConfigurationView _Configuration;
     About _About;

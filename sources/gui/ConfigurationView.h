@@ -24,18 +24,15 @@ class ConfigurationView : public QWidget
     Q_OBJECT
 public:
     ConfigurationView(QWidget* parent = nullptr);
-
 private slots:
     void OnDBConnect();
     void OnDownloadDirBrowse();
     void OnThemeChange();
-    void OnSave();
 
 private:
     void setupDataConnectionGroup();
     void setupDownloadDirGroup();
     void setupThemeSelectionGroup();
-    void setupSaveGroup();
 
     QVBoxLayout     _Layout;
 
@@ -72,11 +69,6 @@ private:
     QRadioButton   _btnDark;
     QButtonGroup   _RadGroup;
     // 3
-
-    // 4
-    QHBoxLayout    _SaveLayout;
-    QPushButton    _btnSave;
-    // 4
 };
 
 #endif

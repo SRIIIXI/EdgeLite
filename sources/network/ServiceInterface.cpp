@@ -9,31 +9,31 @@ ServiceInterface::ServiceInterface(QObject *parent)
 ServiceInterface::ServiceInterface(QString server, quint32 port, QString user, QString password, QObject* parent)
     : QObject(parent)
 {
-    IpAddress = server;
-    ServicePort = port;
-    ServiceUser = user;
-    Password = password;
+    Camera.IpAddress = server;
+    Camera.ServicePort = port;
+    Camera.ServiceUser = user;
+    Camera.Password = password;
     setUpEventHandlers();
 }
 
 void ServiceInterface::setServer(QString str)
 {
-    IpAddress = str;
+    Camera.IpAddress = str;
 }
 
 void ServiceInterface::setPort(quint32 num)
 {
-    ServicePort = num;
+    Camera.ServicePort = num;
 }
 
 void ServiceInterface::setUser(QString str)
 {
-    ServiceUser = str;
+    Camera.ServiceUser = str;
 }
 
 void ServiceInterface::setPassword(QString str)
 {
-    Password = str;
+    Camera.Password = str;
 }
 
 void ServiceInterface::setTemplateDirectory(QString str)
@@ -48,7 +48,7 @@ void ServiceInterface::setPath(QString str)
 
 QString ServiceInterface::name()
 {
-    return DeviceName;
+    return Camera.FriendlyName;
 }
 
 void ServiceInterface::setUpEventHandlers()
@@ -127,7 +127,7 @@ void ServiceInterface::sendRequest(QFile *file)
     {
         if(_BaseUri.length() < 1)
         {
-            _BaseUri = "http://" + IpAddress + ":" + QVariant(ServicePort).toString() + "/";
+            _BaseUri = "http://" + Camera.IpAddress + ":" + QVariant(Camera.ServicePort).toString() + "/";
         }
 
         QString url = _BaseUri;
@@ -141,8 +141,8 @@ void ServiceInterface::sendRequest(QFile *file)
 
 void ServiceInterface::eventAuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator)
 {
-    authenticator->setUser(ServiceUser);
-    authenticator->setPassword(Password);
+    authenticator->setUser(Camera.ServiceUser);
+    authenticator->setPassword(Camera.Password);
 }
 
 void ServiceInterface::eventFinished(QNetworkReply *reply)
@@ -241,27 +241,27 @@ void ServiceInterface::parseResponseBody(QDomElement &domelem)
 
                                       if(tselem.elementsByTagName(yytag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(yytag).at(0).toElement().text() + "/";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(yytag).at(0).toElement().text() + "/";
                                       }
                                       if(tselem.elementsByTagName(MMtag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(MMtag).at(0).toElement().text() + "/";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(MMtag).at(0).toElement().text() + "/";
                                       }
                                       if(tselem.elementsByTagName(ddtag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(ddtag).at(0).toElement().text() + " ";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(ddtag).at(0).toElement().text() + " ";
                                       }
                                       if(tselem.elementsByTagName(hhtag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(hhtag).at(0).toElement().text() + ":";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(hhtag).at(0).toElement().text() + ":";
                                       }
                                       if(tselem.elementsByTagName(mmtag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(mmtag).at(0).toElement().text() + ":";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(mmtag).at(0).toElement().text() + ":";
                                       }
                                       if(tselem.elementsByTagName(sstag).count() > 0)
                                       {
-                                          UTCTimestamp += tselem.elementsByTagName(sstag).at(0).toElement().text() + " UTC";
+                                          Camera.UTCTimestamp += tselem.elementsByTagName(sstag).at(0).toElement().text() + " UTC";
                                       }
                                   }
                               }
@@ -291,46 +291,46 @@ void ServiceInterface::parseResponseBody(QDomElement &domelem)
                   {
                       if(dataelem.tagName().trimmed().contains("Manufacturer"))
                       {
-                          Manufacturer = dataelem.text();
+                          Camera.Manufacturer = dataelem.text();
                       }
 
                       if(dataelem.tagName().trimmed().contains("Model"))
                       {
-                          Model = dataelem.text();
+                          Camera.Model = dataelem.text();
                       }
 
                       if(dataelem.tagName().trimmed().contains("FirmwareVersion"))
                       {
-                          FirmwareVersion = dataelem.text();
+                          Camera.FirmwareVersion = dataelem.text();
                       }
 
                       if(dataelem.tagName().trimmed().contains("SerialNumber"))
                       {
-                          SerialNumber = dataelem.text();
+                          Camera.SerialNumber = dataelem.text();
                       }
 
                       if(dataelem.tagName().trimmed().contains("HardwareId"))
                       {
-                          HardwareId = dataelem.text();
+                          Camera.HardwareId = dataelem.text();
                       }
                   }
 
                   datanode = datanode.nextSibling();
               }
 
-              if(DeviceName.length() < 1)
+              if(Camera.DeviceName.length() < 1)
               {
-                  CameraName = DeviceName = Manufacturer + "-" + Model;
+                  Camera.DeviceName = Camera.FriendlyName = Camera.Manufacturer + "-" + Camera.Model + "-" + Camera.SerialNumber;
               }
 
-              if(Hardware.length() < 1)
+              if(Camera.Hardware.length() < 1)
               {
-                  Hardware = HardwareId;
+                  Camera.Hardware = Camera.HardwareId;
               }
 
-              if(DefaultServiceUri.length() < 1)
+              if(Camera.DefaultServiceUri.length() < 1)
               {
-                  DefaultServiceUri = "http://" + IpAddress + ":" + QVariant(ServicePort).toString() + "/onvif/device_service";
+                  Camera.DefaultServiceUri = "http://" + Camera.IpAddress + ":" + QVariant(Camera.ServicePort).toString() + "/onvif/device_service";
               }
 
               emit deviceInformationReceived(this);
@@ -340,11 +340,16 @@ void ServiceInterface::parseResponseBody(QDomElement &domelem)
 
           if(firstelement.tagName().trimmed().contains("GetCapabilitiesResponse"))
           {
+              emit capabilitiesReceived(this);
+
+              return;
           }
 
           if(firstelement.tagName().trimmed().contains("GetServicesResponse"))
           {
               QDomNode datanode = firstelement.firstChild();
+
+              Camera.ServiceList.clear();
 
               while(!datanode.isNull())
               {
@@ -369,7 +374,7 @@ void ServiceInterface::parseResponseBody(QDomElement &domelem)
                               onvifserv.XAddress = dataelem.elementsByTagName(xatag).at(0).toElement().text();
                           }
 
-                          ServiceList.append(onvifserv);
+                          Camera.ServiceList.append(onvifserv);
                       }
                   }
 
@@ -529,7 +534,6 @@ void ServiceInterface::probeMatchReceived()
     }
     else
     {
-        qDebug() << "Bad XML";
         emit probeFailed(this);
     }
 }
@@ -604,9 +608,9 @@ void ServiceInterface::parseProbedMatch(QDomElement &domelem)
 void ServiceInterface::parseXAddress(QDomElement &domelem)
 {
     QUrl url(domelem.text());
-    IpAddress = url.host();
-    ServicePort = url.port();
-    DefaultServiceUri = url.path();
+    Camera.IpAddress = url.host();
+    Camera.ServicePort = url.port();
+    Camera.DefaultServiceUri = url.path();
 }
 
 void ServiceInterface::parseScopeForName(QDomElement &domelem)
@@ -614,7 +618,7 @@ void ServiceInterface::parseScopeForName(QDomElement &domelem)
     QStringList list;
     QString str = domelem.text();
     list = str.split(' ', QString::SkipEmptyParts);
-    ProbeList.append(list);
+    Camera.ProbeList.append(list);
 
     foreach(QString srvstr, list)
     {
@@ -625,19 +629,13 @@ void ServiceInterface::parseScopeForName(QDomElement &domelem)
         {
             if(nlist.at(0).toLower() == "name")
             {
-                CameraName = DeviceName = nlist.at(1);
+                Camera.DeviceName = Camera.FriendlyName = nlist.at(1);
             }
 
             if(nlist.at(0).toLower() == "hardware")
             {
-                Hardware = nlist.at(1);
+                Camera.Hardware = nlist.at(1);
             }
         }
     }
-}
-
-QString ServiceInterface::storagePath(QString url)
-{
-    return "";
-
 }

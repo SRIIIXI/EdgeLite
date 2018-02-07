@@ -1,5 +1,5 @@
-#ifndef _TRACKS
-#define _TRACKS
+#ifndef _TRACKS_H
+#define _TRACKS_H
 
 #include <QtCore>
 #include <QObject>
@@ -36,19 +36,26 @@ public:
     QString& recordingsDirectory();
     void setRecordingsDirectory(QString str);
 
-    bool addCamera(ServiceInterface* device);
+    bool addCamera(ONVIFCamera device);
     void removeCamera(QString camname);
-    ServiceInterface* getServiceInterface(QString camname);
-    QList<QString> cameraCollection();
-    QList<ServiceInterface*> devices();
+    void removeAllCameras();
+    ONVIFCamera getCamera(QString camname);
+    QList<QString> getCameraNames();
+    QList<ONVIFCamera> cameraList();
     AppSettings* settings();
+    QString cameraNameByEndpoint(QString ipaddress, quint32 port);
 
+    void saveDatabaseInfo();
+    void saveDownloadLocation();
+    void saveStyleOption();
 private:
     bool copyRecursively(const QString &srcFilePath,  const QString &tgtFilePath);
+    void retrieveCameras(QList<QString> &camlist, QSettings &settings);
+
     QString _TemplateDir, _ConfigFile;
     QSplashScreen appSplash;
 
-    QMap<QString, ServiceInterface*> _CameraCollection;
+    QMap<QString, ONVIFCamera> _CameraCollection;
     AppSettings _Settings;
 };
 

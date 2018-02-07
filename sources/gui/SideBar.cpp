@@ -30,12 +30,12 @@ void SideBar::initialize()
 {
     QListWidgetItem *item1 = new QListWidgetItem(&_MenuOptios);
     item1->setData(Qt::DisplayRole, QVariant("Network"));
-    item1->setData(Qt::UserRole, QVariant("Discover available cameras"));
+    item1->setData(Qt::UserRole, QVariant("Discover available devices"));
     item1->setData(Qt::UserRole+1, QVariant((int)1));
 
     QListWidgetItem *item2 = new QListWidgetItem(&_MenuOptios);
-    item2->setData(Qt::DisplayRole, QVariant("Camera"));
-    item2->setData(Qt::UserRole, QVariant("Manage the active camera"));
+    item2->setData(Qt::DisplayRole, QVariant("Device"));
+    item2->setData(Qt::UserRole, QVariant("Manage the active device"));
     item2->setData(Qt::UserRole+1, QVariant((int)2));
 
     QListWidgetItem *item3 = new QListWidgetItem(&_MenuOptios);
@@ -45,7 +45,7 @@ void SideBar::initialize()
 
     QListWidgetItem *item4 = new QListWidgetItem(&_MenuOptios);
     item4->setData(Qt::DisplayRole, QVariant("About"));
-    item4->setData(Qt::UserRole, QVariant("About IPBuM"));
+    item4->setData(Qt::UserRole, QVariant("About Tracks"));
     item4->setData(Qt::UserRole+1, QVariant((int)4));
 
     QListWidgetItem *item5 = new QListWidgetItem(&_MenuOptios);

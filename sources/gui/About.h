@@ -26,14 +26,9 @@ public:
 private:
     QVBoxLayout _Layout;
 
-    QHBoxLayout _AppLayout;
-    QHBoxLayout _QtLayout;
-
+    QVBoxLayout _AppLayout;
     QLabel  _AppImage;
     QLabel  _AppText;
-
-    QLabel  _QtImage;
-    QLabel  _QtText;
 };
 
 #endif

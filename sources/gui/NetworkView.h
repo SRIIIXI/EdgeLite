@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QPushButton>
+#include <QMessageBox>
 #include "CustomWidgets.h"
 #include "ServiceInterface.h"
 
@@ -23,6 +24,7 @@ class NetworkView : public QWidget
 public:
     NetworkView(QWidget* parent = nullptr);
     ~NetworkView();
+    void loadCameraList();
 
 signals:
     void probeTimedOut();
@@ -31,6 +33,9 @@ public slots:
     void startNetworkScan();
     void startHostProbe();
     void eventProbeTimedOut();
+    void eventSaveName();
+    void eventRemove();
+    void eventRemoveAll();
 
     void eventCameraFound(ServiceInterface* cam);
     void eventProbeFailed(ServiceInterface* cam);
@@ -45,27 +50,41 @@ private slots:
     void cameraSelected(QListWidgetItem *item);
 
 private:
-    void displayCameraInfo(ServiceInterface *cam);
+    void displayCameraInfo(ONVIFCamera *cam);
+    void clearCameraInfo();
+    void cleanUp();
 
 private:
     QVBoxLayout _Layout;
-    QGridLayout _ControleBar;
-    DataList _CameraList;
 
+    //
+    QHBoxLayout  _ControleBar;
     QLabel       _lblIpAddress;
     QLineEdit    _txtIpAddress;
     QLabel       _lblPort;
     QLineEdit    _txtPort;
-
     QLabel       _lblUser;
     QLineEdit    _txtUser;
     QLabel       _lblPass;
     QLineEdit    _txtPass;
-
     QPushButton  _cmdProbe;
     QPushButton  _cmdScan;
-    QPushButton  _cmdClearAll;
+    //
 
+    //
+    DataList _CameraList;
+    //
+
+    //
+    QHBoxLayout _ListOptLayout;
+    QLabel  _lblCamFriendlyName;
+    QLineEdit _txtCamFriendlyName;
+    QPushButton _cmdSaveName;
+    QPushButton _cmdRemove;
+    QPushButton  _cmdRemoveAll;
+    //
+
+    //
     QGridLayout _InfoArea;
     QLabel lblManufacturer;
     QLabel lblModel;
@@ -84,8 +103,12 @@ private:
     QLabel txtCameraName;
     QLabel txtHardware;
     QLabel txtUTCTime;
+    //
 
+    //
     DataList _ServiceList;
+    //
+
     ServiceInterface* _CurrentProbe;
 };
 

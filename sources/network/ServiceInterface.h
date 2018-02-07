@@ -13,7 +13,7 @@
 #include <QNetworkAddressEntry>
 #include "ONVIFCamera.h"
 
-class ServiceInterface : public QObject, public ONVIFCamera
+class ServiceInterface : public QObject
 {
     Q_OBJECT
 public:
@@ -38,8 +38,7 @@ public:
     void getRecordings();
 
     QString name();
-
-    static QString storagePath(QString url);
+    ONVIFCamera Camera;
 
 signals:
     void servicesReceived(ServiceInterface* cam);

@@ -1,5 +1,5 @@
-#ifndef _RECORDING_VIEW
-#define _RECORDING_VIEW
+#ifndef _LIVE_STREAM_VIEW
+#define _LIVE_STREAM_VIEW
 
 #include <QMainWindow>
 #include <QDateEdit>
@@ -21,14 +21,21 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QCheckBox>
-#include "ServiceInterface.h"
-#include "RecordingStructures.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QAuthenticator>
+//#include "StorageInterface.h"
+//#include "RecordingStructures.h"
+#include "ONVIFCamera.h"
 
-class RecordingView : public QWidget
+extern int PoolSize;
+
+class LiveStreamView : public QWidget
 {
     Q_OBJECT
 public:
-    RecordingView(QWidget* parent = nullptr);
+    LiveStreamView(QWidget* parent = nullptr);
     void refreshCameraList();
 
 private slots:
@@ -36,23 +43,29 @@ private slots:
     void exportRecordings();
     void searchRecordings();
     void selectAllRecordings();
+    void deSelectAllRecordings();
     void clearAllRecordings();
 
 //    void eventRootDirectoryReceived(QList<StorageDirectory> rootdlist);
 //    void eventRecordsDirectoryReceived(QList<DailyRecordingSet> recdlist);
 //    void eventRecordingsReceived(QList<RecordingSet> recdlist);
+//    void eventStorageDetectionFailed(StorageInterface* cam);
+//    void eventStorageDetectionSuceeded(StorageInterface* cam);
+
+    void eventFinished(QNetworkReply *reply);
+    void eventAuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator);
 
 private:
     void setupCamSelectGroup();
+    void setupFilterGroup();
     void setupSearchGroup();
     void setupExportGroup();
 
-    QString _CurrentCam;
-    ServiceInterface* _ServicePtr;
+    void cleanUpStorageInterface();
+    QString getStoragePath(QString str);
 
-    QList<StorageDirectory> _RootDirList;
-    QList<DailyRecordingSet> _RecDirList;
-    QList<RecordingSet> _RecSet;
+    void enableAll();
+    void disableAll();
 
     QVBoxLayout _Layout;
 
@@ -84,19 +97,42 @@ private:
     QLabel _lblTimeRange4;
     QTimeEdit _tmStartTimeRange4;
     QTimeEdit _tmEndTimeRange4;
-
-    QCheckBox   _chkSkip999;
-    QPushButton _cmdSearch;
     // 2
 
-    QTreeWidget _RecordingList;
-
     // 3
+    QHBoxLayout  _SearchBar;
+    QCheckBox   _chkSkip999;
+    QPushButton _cmdSearch;
+    // 3
+
+    // 4
+    QTreeWidget _RecordingList;
+    // 4
+
+    // 5
     QHBoxLayout _ExportLayout;
     QPushButton _cmdSelectAll;
+    QPushButton _cmdDeSelectAll;
     QPushButton _cmdClearAll;
     QPushButton _cmdExport;
-    // 3
+    // 5
+
+    int _SetCount;
+    int _RecordCount;
+    int _PendingCount;
+    int _FetchedCount;
+
+    QString _CurrentCamName;
+    ONVIFCamera _CurrentCam;
+    QStringList _FetchList;
+
+//    StorageInterface* _StoragePtr;
+//    QList<StorageDirectory> _RootDirList;
+//    QList<DailyRecordingSet> _RecDirList;
+//    QList<RecordingSet> _RecSet;
+
+    QNetworkAccessManager _ConnectionPool[5];
 };
+
 
 #endif

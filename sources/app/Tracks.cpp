@@ -17,7 +17,7 @@ Tracks::Tracks(int argc, char *argv[]) : QApplication (argc, argv)
     QString curpath = QDir::currentPath();
     QString datalocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)+ "/" + appnamestr;   
     _TemplateDir = datalocation + "/templates/";
-    _Settings.DownloadDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    _Settings.RecordingsDirectory = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     _ConfigFile = datalocation + "/config/";
     _ConfigFile += appnamestr + ".ini";
 
@@ -35,9 +35,9 @@ Tracks::Tracks(int argc, char *argv[]) : QApplication (argc, argv)
             copyRecursively(curpath + "/templates/", _TemplateDir);
         }
 
-        if(!dir.exists(_Settings.DownloadDirectory))
+        if(!dir.exists(_Settings.RecordingsDirectory))
         {
-            dir.mkpath(_Settings.DownloadDirectory);
+            dir.mkpath(_Settings.RecordingsDirectory);
         }
 
         if(!dir.exists(QString(datalocation + "/config/")))
@@ -60,8 +60,8 @@ Tracks::Tracks(int argc, char *argv[]) : QApplication (argc, argv)
                 _Settings.DatabasePass = settings.value("DatabasePass").toString();
                 settings.endGroup();
 
-                settings.beginGroup("Downloads");
-                _Settings.DownloadDirectory = settings.value("DownloadDirectory").toString();
+                settings.beginGroup("Recordings");
+                _Settings.RecordingsDirectory = settings.value("RecordingsDirectory").toString();
                 settings.endGroup();
 
                 settings.beginGroup("Style");
@@ -69,25 +69,10 @@ Tracks::Tracks(int argc, char *argv[]) : QApplication (argc, argv)
                 settings.endGroup();
 
                 settings.beginGroup("Cameras");
-
                 QStringList keys = settings.childKeys();
-
-                foreach(QString keystr, keys)
-                {
-                    QStringList tokens = settings.value(keystr).toString().split('/');
-
-                    ServiceInterface* dev = new ServiceInterface();
-
-                    dev->DeviceName = keystr;
-                    dev->IpAddress = tokens.at(0);
-                    dev->ServicePort = QVariant(tokens.at(1)).toUInt();
-                    dev->ServiceUser = tokens.at(2);
-                    dev->Password = tokens.at(3);
-
-                    addCamera(dev);
-                }
-
                 settings.endGroup();
+
+                retrieveCameras(keys, settings);
             }
         }
     }
@@ -96,13 +81,13 @@ Tracks::Tracks(int argc, char *argv[]) : QApplication (argc, argv)
 
     ApplicationThemeManager.initFontPreference();
 
-    if(_Settings.Style == "L")
+    if(_Settings.Style == "D")
     {
-        ApplicationThemeManager.applyLightTheme(this);
+        ApplicationThemeManager.applyDarkTheme(this);
     }
     else
     {
-        ApplicationThemeManager.applyDarkTheme(this);
+        ApplicationThemeManager.applyLightTheme(this);
     }
 }
 
@@ -137,22 +122,55 @@ QString& Tracks::templateDirectory()
 
 QString& Tracks::recordingsDirectory()
 {
-    return _Settings.DownloadDirectory;
+    return _Settings.RecordingsDirectory;
 }
 
 void Tracks::setRecordingsDirectory(QString str)
 {
-    _Settings.DownloadDirectory = str;
+    _Settings.RecordingsDirectory = str;
 }
 
-bool Tracks::addCamera(ServiceInterface *device)
+bool Tracks::addCamera(ONVIFCamera device)
 {
-    if(_CameraCollection.contains(device->CameraName))
+    if(_CameraCollection.contains(device.FriendlyName))
     {
         return false;
     }
 
-    _CameraCollection.insert(device->CameraName, device);
+    _CameraCollection.insert(device.FriendlyName, device);
+
+    QSettings settings(_ConfigFile, QSettings::IniFormat);
+    settings.beginGroup("Cameras");
+    settings.setValue(device.FriendlyName, device.uniqueToken());
+    settings.endGroup();
+
+    settings.beginGroup(device.FriendlyName);
+
+    settings.setValue("Manufacturer", device.Manufacturer);
+    settings.setValue("Model", device.Model);
+    settings.setValue("FirmwareVersion", device.FirmwareVersion);
+    settings.setValue("SerialNumber", device.SerialNumber);
+    settings.setValue("HardwareId", device.HardwareId);
+    settings.setValue("Hardware", device.Hardware);
+    settings.setValue("UTCTimestamp", device.UTCTimestamp);
+    settings.setValue("DeviceName", device.DeviceName);
+    settings.setValue("IpAddress", device.IpAddress);
+    settings.setValue("ServicePort", device.ServicePort);
+    settings.setValue("ServiceUser", device.ServiceUser);
+    settings.setValue("Password", device.Password);
+    settings.setValue("DefaultServiceUri", device.DefaultServiceUri);
+
+    QString svrlist;
+    foreach(ONVIFService oserv, device.ServiceList)
+    {
+        svrlist += oserv.NameSpace + ";" + oserv.XAddress + "!";
+    }
+
+    settings.setValue("ServiceList", svrlist);
+
+    settings.endGroup();
+
+    settings.sync();
 
     return true;
 }
@@ -161,33 +179,61 @@ void Tracks::removeCamera(QString camname)
 {
     if(_CameraCollection.contains(camname))
     {
+        QString iniKey = _CameraCollection.value(camname).FriendlyName;
+        QList<ONVIFService> slist = _CameraCollection.value(camname).ServiceList;
+
         _CameraCollection.remove(camname);
+
+        QSettings settings(_ConfigFile, QSettings::IniFormat);
+
+        settings.beginGroup("Cameras");
+        settings.remove(iniKey);
+        settings.endGroup();
+
+        settings.beginGroup(iniKey);
+        settings.remove(""); //removes the group, and all it keys
+        settings.endGroup();
+
+        settings.sync();
     }
 }
 
-ServiceInterface *Tracks::getServiceInterface(QString camname)
+void Tracks::removeAllCameras()
 {
-    if(_CameraCollection.contains(camname))
+    QList<QString> camlist = _CameraCollection.keys();
+
+    foreach (QString cam, camlist)
     {
-        ServiceInterface* refobj = _CameraCollection.value(camname);
-
-        if(refobj != nullptr)
-        {
-            return refobj;
-        }
+        removeCamera(cam);
     }
-
-    return nullptr;
 }
 
-QList<QString> Tracks::cameraCollection()
+ONVIFCamera Tracks::getCamera(QString camname)
+{
+    return _CameraCollection.value(camname);
+}
+
+QList<QString> Tracks::getCameraNames()
 {
     return _CameraCollection.keys();
 }
 
-QList<ServiceInterface *> Tracks::devices()
+QList<ONVIFCamera> Tracks::cameraList()
 {
     return _CameraCollection.values();
+}
+
+QString Tracks::cameraNameByEndpoint(QString ipaddress, quint32 port)
+{
+    foreach(ONVIFCamera cam, _CameraCollection.values())
+    {
+        if(cam.IpAddress == ipaddress && cam.ServicePort == port)
+        {
+            return cam.FriendlyName;
+        }
+    }
+
+    return "";
 }
 
 bool Tracks::copyRecursively(const QString &srcFilePath,  const QString &tgtFilePath)
@@ -208,3 +254,73 @@ bool Tracks::copyRecursively(const QString &srcFilePath,  const QString &tgtFile
     return true;
 }
 
+void Tracks::saveDatabaseInfo()
+{
+    QSettings settings(_ConfigFile, QSettings::IniFormat);
+    settings.beginGroup("Database");
+    settings.setValue("DatasourceName", tracksPtr->settings()->DatasourceName);
+    settings.setValue("DatabaseHost", tracksPtr->settings()->DatabaseHost);
+    settings.setValue("DatabasePort", tracksPtr->settings()->DatabasePort);
+    settings.setValue("DatabaseUser", tracksPtr->settings()->DatabaseUser);
+    settings.setValue("DatabasePass", tracksPtr->settings()->DatabasePass);
+    settings.endGroup();
+    settings.sync();
+}
+
+void Tracks::saveDownloadLocation()
+{
+    QSettings settings(_ConfigFile, QSettings::IniFormat);
+    settings.beginGroup("Recordings");
+    settings.setValue("RecordingsDirectory", tracksPtr->settings()->RecordingsDirectory);
+    settings.endGroup();
+    settings.sync();
+}
+
+void Tracks::saveStyleOption()
+{
+    QSettings settings(_ConfigFile, QSettings::IniFormat);
+    settings.beginGroup("Style");
+    settings.setValue("Style", tracksPtr->settings()->Style);
+    settings.endGroup();
+    settings.sync();
+}
+
+void Tracks::retrieveCameras(QList<QString> &camlist, QSettings &settings)
+{
+    foreach(QString camname, camlist)
+    {
+        ONVIFCamera device;
+
+        settings.beginGroup(camname);
+
+        device.FriendlyName = camname;
+        device.Manufacturer = settings.value("Manufacturer").toString();
+        device.Model = settings.value("Model").toString();
+        device.FirmwareVersion = settings.value("FirmwareVersion").toString();
+        device.SerialNumber = settings.value("SerialNumber").toString();
+        device.HardwareId = settings.value("HardwareId").toString();
+        device.Hardware = settings.value("Hardware").toString();
+        device.UTCTimestamp = settings.value("UTCTimestamp").toString();
+        device.DeviceName = settings.value("DeviceName").toString();
+        device.IpAddress = settings.value("IpAddress").toString();
+        device.ServicePort = settings.value("ServicePort").toUInt();
+        device.ServiceUser = settings.value("ServiceUser").toString();
+        device.Password = settings.value("Password").toString();
+        device.DefaultServiceUri = settings.value("DefaultServiceUri").toString();
+
+        QStringList svrlist = settings.value("ServiceList").toString().split('!', QString::SkipEmptyParts);
+
+        foreach(QString svrstr, svrlist)
+        {
+            QStringList tokens = svrstr.split(';', QString::SkipEmptyParts);
+            ONVIFService srv;
+            srv.NameSpace = tokens.at(0);
+            srv.XAddress = tokens.at(1);
+            device.ServiceList.append(srv);
+        }
+
+        _CameraCollection.insert(camname, device);
+
+        settings.endGroup();
+    }
+}

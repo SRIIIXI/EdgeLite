@@ -10,10 +10,8 @@ typedef struct AppSettings
    QString DatabasePort;
    QString DatabaseUser;
    QString DatabasePass;
-
    QString Style;
-
-   QString DownloadDirectory;
+   QString RecordingsDirectory;
 }AppSettings;
 
 #endif

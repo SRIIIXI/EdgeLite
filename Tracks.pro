@@ -38,10 +38,10 @@ SOURCES += \
     sources/gui/ConfigurationView.cpp \
     sources/gui/StatisticsView.cpp \
     sources/gui/About.cpp \
-    sources/gui/RecordingView.cpp \
     sources/network/ServiceInterface.cpp \
     sources/network/DownloadManager.cpp \
-    sources/app/Tracks.cpp
+    sources/app/Tracks.cpp \
+    sources/gui/LiveStreamView.cpp
 
 HEADERS += \
     sources/app/AppSettings.h \
@@ -53,11 +53,11 @@ HEADERS += \
     sources/gui/ConfigurationView.h \
     sources/gui/StatisticsView.h \
     sources/gui/About.h \
-    sources/gui/RecordingView.h \
     sources/network/ONVIFCamera.h \
     sources/network/ServiceInterface.h \
     sources/network/RecordingStructures.h \
     sources/network/DownloadManager.h \
-    sources/app/Tracks.h
+    sources/app/Tracks.h \
+    sources/gui/LiveStreamView.h
 
 RESOURCES += resources/Resources.qrc

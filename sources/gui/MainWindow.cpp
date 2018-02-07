@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     setMinimumWidth(1024);
     mainWindowPtr = this;
 
-    setWindowIcon(QIcon(":images/ipbum.png"));
+    setWindowIcon(QIcon(":images/tracks.png"));
 }
 
 MainWindow::~MainWindow()
@@ -18,6 +18,15 @@ MainWindow::~MainWindow()
 
 bool MainWindow::initialize()
 {
+    _StatusMessage.setMinimumWidth(350);
+    _ProgressIndicator.setMinimumWidth(width() - 370);
+    _StatusMessage.setFrameStyle(QFrame::NoFrame);
+    _ProgressIndicator.setFrameStyle(QFrame::NoFrame);
+
+    setStatusBar(&_AppStatusBar);
+    _AppStatusBar.insertWidget(0, &_StatusMessage);
+    _AppStatusBar.insertWidget(1, &_ProgressIndicator);
+
     setupDirectoryView();
     _AppCentralWidget.addWidget(&_ViewSeparator);
     setupViewPane();
@@ -44,7 +53,15 @@ void MainWindow::setupViewPane()
     _ViewPane.addWidget(&_Configuration);
     _ViewPane.addWidget(&_About);
 
-    _ViewPane.setCurrentIndex(0);
+    if(tracksPtr->cameraList().count() > 0)
+    {
+        _ViewPane.setCurrentWidget(&_Recordings);
+        _Recordings.refreshCameraList();
+    }
+    else
+    {
+        _ViewPane.setCurrentIndex(0);
+    }
 }
 
 void MainWindow::eventOptionSelected(int index)
@@ -58,6 +75,7 @@ void MainWindow::eventOptionSelected(int index)
     {
     case 1:
         _ViewPane.setCurrentWidget(&_Network);
+        _Network.loadCameraList();
         break;
     case 2:
         _ViewPane.setCurrentWidget(&_Recordings);
@@ -72,5 +90,26 @@ void MainWindow::eventOptionSelected(int index)
     default:
         break;
     }
+}
+
+void MainWindow::setStatusMessage(QString str)
+{
+    _StatusMessage.setText(str);
+}
+
+void MainWindow::setProgressMessage(QString str)
+{
+    _ProgressIndicator.setText(str);
+}
+
+void MainWindow::clearStatusBar()
+{
+    _StatusMessage.setText("");
+    _ProgressIndicator.setText("");
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    _ProgressIndicator.setMinimumWidth(width() - 370);
 }
 

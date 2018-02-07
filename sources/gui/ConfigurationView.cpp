@@ -24,8 +24,6 @@ ConfigurationView::ConfigurationView(QWidget* parent) : QWidget(parent)
 
     _Layout.addWidget(new HorizontalLine());
 
-    setupSaveGroup();
-
     _Layout.setMargin(0);
     _Layout.setSpacing(0);
 
@@ -98,7 +96,7 @@ void ConfigurationView::setupDownloadDirGroup()
     _Layout.addLayout(&_DownloadDirLayout);
     connect(&_btnDownloadDir,SIGNAL(clicked()),this,SLOT(OnDownloadDirBrowse()));
 
-     _txtDownloadDir.setText(tracksPtr->settings()->DownloadDirectory);
+     _txtDownloadDir.setText(tracksPtr->settings()->RecordingsDirectory);
 }
 
 void ConfigurationView::setupThemeSelectionGroup()
@@ -128,18 +126,6 @@ void ConfigurationView::setupThemeSelectionGroup()
     }
 }
 
-void ConfigurationView::setupSaveGroup()
-{
-    _btnSave.setMaximumWidth(75);
-    _btnSave.setMinimumWidth(75);
-    _btnSave.setText("&Save Changes");
-    _SaveLayout.addStretch();
-    _SaveLayout.addWidget(&_btnSave, Qt::AlignRight);
-    _SaveLayout.setMargin(5);
-    _Layout.addLayout(&_SaveLayout);
-    connect(&_btnSave,SIGNAL(clicked()),this,SLOT(OnSave()));
-}
-
 void ConfigurationView::OnDBConnect()
 {
     QSqlDatabase _Database = QSqlDatabase::addDatabase("QMYSQL");
@@ -155,8 +141,14 @@ void ConfigurationView::OnDBConnect()
      }
      else
      {
-         _txtConnectionStatus.setText("Connection suceeded");
-         _Database.close();
+        _txtConnectionStatus.setText("Connection suceeded");
+        _Database.close();
+        tracksPtr->settings()->DatasourceName = _txtDataSourceName.text();
+        tracksPtr->settings()->DatabaseHost = _txtHostname.text();
+        tracksPtr->settings()->DatabasePort = _txtPortNum.text();
+        tracksPtr->settings()->DatabaseUser = _txtDatabaseUsername.text();
+        tracksPtr->settings()->DatabasePass = _txtDatabasePassword.text();
+        tracksPtr->saveDatabaseInfo();
      }
 }
 
@@ -167,6 +159,8 @@ void ConfigurationView::OnDownloadDirBrowse()
     if (!dirName.isEmpty())
     {
         _txtDownloadDir.setText(dirName);
+        tracksPtr->settings()->RecordingsDirectory = _txtDownloadDir.text();
+        tracksPtr->saveDownloadLocation();
     }
 }
 
@@ -181,15 +175,6 @@ void ConfigurationView::OnThemeChange()
     {
         ApplicationThemeManager.applyDarkTheme(tracksPtr);
     }
-}
-
-void ConfigurationView::OnSave()
-{
-    tracksPtr->settings()->DatasourceName = _txtDataSourceName.text();
-    tracksPtr->settings()->DatabaseHost = _txtHostname.text();
-    tracksPtr->settings()->DatabasePort = _txtPortNum.text();
-    tracksPtr->settings()->DatabaseUser = _txtDatabaseUsername.text();
-    tracksPtr->settings()->DatabasePass = _txtDatabasePassword.text();
 
     if(_RadGroup.checkedButton()->text().toLower() == "light")
     {
@@ -201,35 +186,5 @@ void ConfigurationView::OnSave()
         tracksPtr->settings()->Style = "D";
     }
 
-    tracksPtr->settings()->DownloadDirectory = _txtDownloadDir.text();
-
-    QSettings settings(tracksPtr->configFile(), QSettings::IniFormat);
-
-    settings.beginGroup("Database");
-    settings.setValue("DatasourceName", tracksPtr->settings()->DatasourceName);
-    settings.setValue("DatabaseHost", tracksPtr->settings()->DatabaseHost);
-    settings.setValue("DatabasePort", tracksPtr->settings()->DatabasePort);
-    settings.setValue("DatabaseUser", tracksPtr->settings()->DatabaseUser);
-    settings.setValue("DatabasePass", tracksPtr->settings()->DatabasePass);
-    settings.endGroup();
-
-    settings.beginGroup("Downloads");
-    settings.setValue("DownloadDirectory", tracksPtr->settings()->DownloadDirectory);
-    settings.endGroup();
-
-    settings.beginGroup("Style");
-    settings.setValue("Style", tracksPtr->settings()->Style);
-    settings.endGroup();
-
-    settings.beginGroup("Cameras");
-
-    foreach(ServiceInterface* ndev, tracksPtr->devices())
-    {
-        settings.setValue(ndev->CameraName, ndev->uniqueToken());
-    }
-
-    settings.endGroup();
-
-    settings.sync();
+    tracksPtr->saveStyleOption();
 }
-

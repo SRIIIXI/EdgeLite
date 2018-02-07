@@ -21,19 +21,17 @@ public:
 
     QString Hardware;
     QString UTCTimestamp;
-    QString CameraName;
-
-    QList<ONVIFService> ServiceList;
-
-    QStringList ProbeList;
-    QString DefaultServiceUri;
+    QString DeviceName;
 
     QString IpAddress;
     quint32 ServicePort;
     QString ServiceUser;
     QString Password;
-    QString DeviceName;
     QString FriendlyName;
+
+    QList<ONVIFService> ServiceList;
+    QStringList ProbeList;
+    QString DefaultServiceUri;
 
     QString uniqueToken()
     {
