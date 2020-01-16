@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>images/qtlogo.png</file>
-        <file>images/splashscreen.png</file>
-        <file>images/product.png</file>
-        <file>images/tracks.png</file>
-    </qresource>
-</RCC>

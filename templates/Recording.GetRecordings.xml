@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
-<SOAP-ENV:Body>
-<trc:GetRecordings xmlns:trc="http://www.onvif.org/recording/wsdl"/>
-</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>

@@ -1,3 +1,4 @@
+.vs/
 *.*~
 *.autosave
 *.aux
@@ -11,6 +12,17 @@
 *.sortinc
 *.tex
 *.toc
+*.suo
+*.db
+*.opendb
+*.ipch
+*.ilk
+*.pdb
+*.tlog
+*.log
+*.idb
+*.iobj
+*.exp
 *~
 *-stamp
 .*.swp
@@ -102,11 +114,9 @@ Testing/*
 *.app
 
 # Project intermediate files
-*.pro.user
 *.user
-*.vcxproj
 *.vcxproj.filters
-*.sln
+*.filters
 
 # Windows image file caches
 Thumbs.db
@@ -133,3 +143,5 @@ CMakeCache.txt
 # CMake folder
 CMakeFiles/
 build/
+Debug/
+packages/
