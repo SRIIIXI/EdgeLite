@@ -3,7 +3,7 @@
 
 typedef struct AppKeyValue
 {
-
+	void* Dummy;
 }AppKeyValue;
 
 #endif

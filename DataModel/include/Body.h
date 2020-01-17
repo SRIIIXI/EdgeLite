@@ -2,7 +2,6 @@
 #define _BODY
 
 #include "Types.h"
-#include "Alert.h"
 #include "Command.h"
 #include "Query.h"
 #include "AppKeyValue.h"
@@ -10,8 +9,7 @@
 
 typedef union Body
 {
-	Alert AlertPayload;
-	Command CommandPayload;
+	CommandType CommandPayload;
 	AppKeyValue HAKVPayload;
 	Query QueryPayload;
 	Telemetry TelemetryPayload;

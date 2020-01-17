@@ -11,13 +11,13 @@ typedef union CommandBody
 		unsigned long long Timestamp;
 		float Latitude;
 		float Longitude;
-	}	
+	};	
 	
 	struct ConfigureDeviceDownlink
 	{
-		NSInterfaces Interfaces;
-		NSPortforwarding PortForwarding;
-	}
+		NetworkInterface Interfaces;
+		PortforwardingRule PortForwarding;
+	};
 
 	struct ConfigureDeviceUplink
 	{
@@ -26,28 +26,28 @@ typedef union CommandBody
 
 	struct RebootDevice
 	{
-		char CommandText[16];
-	}
+		char RebootCommand[16];
+	};
 
 	struct VPNDevice
 	{
-		char CommandText[16];
+		char VPNCommand[16];
 	};
 
 	struct AppManagementBoard
 	{
 		char TargetApplication[33];
-		char CommandText[16];
+		char AppCommand[16];
 	};
 
 }CommandBody;
 
-typedef struct Command
+typedef struct CommandStruct
 {
 	Header Header;
 	PayloadType Type;
 	CommandType CommandType;
-	CommandBody Command;
-}Command;
+	CommandBody Command1;
+}CommandStruct;
 
 #endif

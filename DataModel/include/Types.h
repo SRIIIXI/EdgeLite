@@ -1,32 +1,38 @@
 #ifndef _TYPES
-#define
+#define _TYPES
 
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum TelemetryTypes
+typedef enum ServiceType
+{
+	CoreService=1,
+	UserApplication=2
+}ServiceType;
+
+typedef enum TelemetryType
 {
 	System=0,
 	Network=1,
 	Filesystem=2,
-	AppStatus=3,
-	AppManager=100
-}TelemetryTypes;
+	Sensor=3,
+}TelemetryType;
 
-typedef enum Status
+typedef enum ProcessStatus
 {
 	Running=0,
 	Stopped=1,
-	Error=2,
+	Suspended=2,
 	Idle=3,
-};
+}ProcessStatus;
 
 typedef enum NetworkIfType
 {
 	Ethernet=0,
 	WiFi=1,
-};
+	GSM=2
+}NetworkIfType;
 
 typedef enum ResponseType
 {
@@ -42,30 +48,27 @@ typedef enum TransportType
 	IP_CoAP = 2,
 	RF_ZigBee = 3,
 	RF_Bluetooth = 4,
-	RF_WiFi = 5,
-	Unknown = -1
+	RF_WiFi = 5
 }TransportType;
 
-typedef enum Payload
+typedef enum PayloadType
 {
 	Alert = 0,
-	Telemetry = 1,
-	Command = 2,
-	Query = 3,
-	Respoe = 4,
-	HostedAppKeyValue = 5,
-	Unknown = -1
-}Payload;
+	Notification = 1,
+	Telemetry = 2,
+	Command = 3,
+	Query = 4,
+	Response = 5
+}PayloadType;
 
 typedef enum Services
 {
 	BootstrapService = 0,
-	TraportService = 1,
+	TransportService = 1,
 	MonitoringService = 2,
 	ApplicationManager = 3,
 	ResourceManager = 4,
-	PeripheralManager = 5,
-	Unknown = -1
+	PeripheralManager = 5
 }Services;
 
 typedef enum Application
@@ -83,27 +86,24 @@ typedef enum Application
 	PublicWiFi = 10,
 	WasteManagement = 11,
 	Parking = 12,
-	ElectricMetering = 13,
-	Unknown = -1
-}Applicatio;
+	ElectricMetering = 13
+}Application;
 
 typedef enum CommandType
 {
 	Registration=0,
 	Reboot=1,
-	ConfigurationUplink=2,
-	ConfigurationDownlink = 3,
-	VPN=4,
-	AppManagement=5
+	Configuration=2,
+	VPN=3,
+	ProcessManagement=5
 }CommandType;
 
 typedef enum WiFiSecurity
 {
 	WPA=0,
-	WPA-PSK=1,
+	PSK=1,
 	WEP=2,
-	None=100,
-	Unknown=-1
+	None=100
 }WiFiSecurity;
 
 typedef enum IPAddressType
@@ -137,29 +137,33 @@ typedef struct IfGSM
 {
 	bool IsEnabled;
 	char APN[33];
+	char IMEI[16];
+	char IMSI[16];
+	char MSISDN[16];
 }IfGSM;
 
-typedef struct Interfaces
+typedef struct NetworkInterface
 {
 	IfEthernet IFEThernet[2];
 	IfGSM IFGSM[2];
 	IfWiFi IFWiFi[2];
-}Interfaces;
+}NetworkInterface;
 
-typedef struct Portforwarding
+typedef struct PortforwardingRule
 {
 	char ForwardedInterface[33];
 	char ForwardedIpAddress[16];
-	uigned short	ForwardedPort;
+	unsigned short	ForwardedPort;
 	char IncomingInterface[33];
-	uigned short	IncomingPort;
-}Portforwarding;
+	unsigned short	IncomingPort;
+}PortforwardingRule;
 
-typedef struct HostedApp
+typedef struct Service
 {
 	char AppName[33];
-	Status AppStatus;
-}HostedApp;
+	ProcessStatus AppStatus;
+	ServiceType AppType;
+}Service;
 
 typedef struct SensorValue
 {

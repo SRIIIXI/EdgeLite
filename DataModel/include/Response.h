@@ -1,5 +1,5 @@
-#ifndef _RESPONSES
-#define _RESPONSES
+#ifndef _RESPONSE
+#define _RESPONSE
 
 #include "Types.h"
 #include "Header.h"

@@ -15,15 +15,15 @@ typedef union TelemetryBody
 				float Maximum;
 				float Minimum;
 				float SMA;
-			}
+			}Utilization;
 
 			struct Temperature
 			{
 				float Maximum;
 				float Minimum;
 				float SMA;
-			}
-		}
+			}Temperature;
+		}CPU;
 
 		struct Memory
 		{
@@ -33,7 +33,7 @@ typedef union TelemetryBody
 				float Minimum;
 				float SMA;
 				float Total;
-			}
+			}Physical;
 
 			struct Virtual
 			{
@@ -41,9 +41,9 @@ typedef union TelemetryBody
 				float Minimum;
 				float SMA;
 				float Total;
-			}
-		}
-	}
+			}Virtual;
+		}Memory;
+	};
 
 	struct Network
 	{
@@ -58,7 +58,7 @@ typedef union TelemetryBody
 			unsigned long Packets;
 			unsigned long Dropped;
 			unsigned long Error;
-		}
+		}Sent;
 
 		struct Received
 		{
@@ -66,26 +66,26 @@ typedef union TelemetryBody
 			unsigned long Packets;
 			unsigned long Dropped;
 			unsigned long Error;
-		}
-	}
+		}Received;
+	};
 
 	struct FileSystem
 	{
 		float FreeSpacePerCentage;
 		float FreeSpaceMegaBytes;
-	}
+	}FileSystem;
 
 	struct DeviceAppStatus
 	{
 		char ApplicationId[33];
 		unsigned long long Timestamp;
-		AppStatus Status;
-	}
+		ProcessStatus Status;
+	}DeviceAppStatus;
 
 	struct AppList
 	{
-		Application AppList[10];
-	}
+		Application ListOfApps[10];
+	}AppList;
 
 	struct AppData
 	{
@@ -93,14 +93,15 @@ typedef union TelemetryBody
 		Application ActiveApplication;
 		SensorValue SensorValues[64];
 		Peripheral Peripheral[32];
-	}
+	}AppData;
+
 }TelemetryBody;
 
 typedef struct Telemetry
 {
 	Header Header;
 	Payload PayloadType;
-	TelemetryTypes CommandType;
+	TelemetryType CommandType;
 	TelemetryBody Body;
 }Telemetry;
 

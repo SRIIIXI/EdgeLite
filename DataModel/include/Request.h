@@ -1,7 +1,7 @@
 // Temporary file
 
-#ifndef  _REQUESTS
-#define _REQUESTS
+#ifndef  _REQUEST
+#define _REQUEST
 
 #include "Types.h"
 #include "Header.h"
