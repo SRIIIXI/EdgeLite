@@ -1,8 +1,8 @@
-# Tracks
+# NextEdge
 
-A device management suite for smart homes. Tracks provide a dashboard to view your commonly installed IP enabled devices in homes.
+An Edge device management system and Edge firmware suite for IoT applications. 
 
-The currently supported devices are:
+The supported I/O are:
 
 1. IP Cameras supporting ONVIF standard
 2. HVAC support MODBUS over TCP
