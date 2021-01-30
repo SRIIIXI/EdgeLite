@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>images/splashscreen.png</file>
-        <file>images/ipbum.png</file>
-        <file>images/ipbum_small.png</file>
-    </qresource>
-</RCC>
