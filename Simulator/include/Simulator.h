@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdbool.h>
 
-bool simulator_initialize();
+bool simulator_initialize(char const *confpath);
 bool simulator_destroy();
 bool simulator_start();
 bool simulator_restart();

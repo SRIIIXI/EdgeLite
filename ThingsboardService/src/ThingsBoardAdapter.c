@@ -219,6 +219,8 @@ bool mqtt_internal_send(struct mosquitto *mqtt_context, const char* topic, int d
 
 static void* receiver_thread(void *ptr)
 {
+    pthread_detach(pthread_self());
+
     thingsboard_adapter_t* tb_ptr = (thingsboard_adapter_t*)ptr;
 
     if(tb_ptr == NULL)

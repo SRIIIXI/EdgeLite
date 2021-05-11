@@ -60,8 +60,9 @@ static unsigned int sampling_rate = 0;
 static SimulationParameter* simulation_parameters = NULL;
 static char peripheral_id[65] = {0};
 static char peripheral_name[129] = {0};
+static bool continue_processing = true;
 
-bool simulator_initialize()
+bool simulator_initialize(char const *confpath)
 {
     logger = logger_allocate_default();
 
@@ -73,7 +74,14 @@ bool simulator_initialize()
     signals_register_callback(on_signal_received);
     signals_initialize_handlers();
 
-    config = configuration_allocate_default();
+    if(confpath == NULL)
+    {
+        config = configuration_allocate_default();
+    }
+    else
+    {
+        config = configuration_allocate(confpath);
+    }
 
     if(config == NULL)
     {
@@ -111,6 +119,8 @@ bool simulator_initialize()
     configuration_release(config);
 
     srand(time(0));
+
+    continue_processing = true;
 
     return true;
 }
@@ -169,9 +179,7 @@ bool simulator_start()
         return false;
     }
 
-    bool continue_loop = true;
-
-    while(continue_loop)
+    while(continue_processing)
     {
         sleep(sampling_rate);
 
@@ -234,8 +242,6 @@ bool simulator_start()
                 }
                 case Timestamp:
                 {
-                    char str_temp[16] = {0};
-                    get_random_timnestamp(str_temp);
                     buffer_append_unix_timestamp(payload);
                     break;
                 }
@@ -292,6 +298,7 @@ bool simulator_stop()
     message_bus_release(message_bus);
     str_list_free(destination_list);
     logger_release(logger);
+    free(simulation_parameters);
     return false;
 }
 
@@ -355,8 +362,7 @@ void on_signal_received(SignalType stype)
         case Shutdown:
         {
             WriteLog(logger, "SHUTDOWN SIGNAL", LOG_CRITICAL);
-            simulator_stop();
-            exit(0);
+            continue_processing = false;
         }
         case Alarm:
         {

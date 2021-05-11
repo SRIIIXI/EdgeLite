@@ -45,7 +45,7 @@ static long port = 1883;
 static char uri[65] = {0};
 
 static dictionary_t* connection_map = NULL;
-static bool continue_loop = true;
+static bool continue_processing = true;
 
 bool service_initialize()
 {
@@ -115,6 +115,8 @@ bool service_initialize()
 
     strfreelist(client_ids);
 
+    configuration_release(config);
+
     return true;
 }
 
@@ -143,7 +145,7 @@ bool service_start()
 
     WriteInformation(logger, "Connected to message bus");
 
-    while(continue_loop)
+    while(continue_processing)
     {
         sleep(10);
     }
@@ -168,6 +170,8 @@ bool service_stop()
         thingsboard_adapter_t* adapter = dictionary_get_value(connection_map, client_id, strlen(client_id));
 
         thingsboard_close(adapter);
+
+        free(adapter);
     }
 
     strfreelist(connections);
@@ -186,6 +190,11 @@ bool service_stop()
 
 void on_network_event(const char* node_name, PayloadType ptype, DataType dtype, const char* messagebuffer, long buffersize, long payload_id)
 {
+    if(!continue_processing)
+    {
+        return;
+    }
+
     upload(messagebuffer, ptype);
 }
 
@@ -211,15 +220,15 @@ void upload(const char *messagebuffer, char payload_type)
     if(pos > -1)
     {
         char *temp = (char*)calloc(1, 65);
+        char *key, *value;
+
         for(long ctr = pos, idx=0; buffer[ctr] != ',' && buffer[ctr] != '}'; ctr++, idx++)
         {
             temp[idx] = buffer[ctr];
         }
 
-        char *key, *value;
-        key = (char*)calloc(1, 33);
-        value = (char*)calloc(1, 33);
         strsplitkeyvaluechar(temp, ':', &key, &value);
+
         memset(temp, 0, 65);
         strcpy(temp, value);
         free(key);
@@ -237,36 +246,22 @@ void upload(const char *messagebuffer, char payload_type)
 
     if(adapter == NULL)
     {
-        const char* token = configuration_get_value_as_string(config, "authentication", device_id);
-
-        if(token != NULL)
-        {
-            long tpos = strindexofchar(token, ':');
-
-            if(tpos > 0)
-            {
-                char userid[33] = {0};
-                char passwd[33] = {0};
-                strncpy(userid, &token[0], tpos);
-                strncpy(passwd, &token[tpos+1], 32);
-
-                adapter = thingsboard_connect(logger, device_id, server, port, userid, passwd, on_downlink);
-
-                if(adapter == NULL)
-                {
-                    return;
-                }
-
-                dictionary_set_value(connection_map, device_id, strlen(device_id), adapter, sizeof (thingsboard_adapter_t*));
-            }
-        }
+        free(buffer);
+        return;
     }
 
     WriteInformation(logger, buffer);
 
     if(payload_type == Data)
     {
-        thingsboard_send_data(adapter, buffer, uri);
+        if(thingsboard_send_data(adapter, buffer, uri))
+        {
+            WriteInformation(logger, buffer);
+        }
+        else
+        {
+            WriteLog(logger, "MQTT send failure", LOG_ERROR);
+        }
     }
 
     if(payload_type == Event)
@@ -294,7 +289,7 @@ void on_signal_received(SignalType stype)
         case Shutdown:
         {
             WriteLog(logger, "SHUTDOWN SIGNAL", LOG_CRITICAL);
-            continue_loop = false;
+            continue_processing = false;
         }
         case Alarm:
         {
