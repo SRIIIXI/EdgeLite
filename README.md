@@ -1,4 +1,4 @@
-# NextEdge
+# EdgeLite
 
 An Edge device management system and Edge firmware suite for IoT applications. 
 
